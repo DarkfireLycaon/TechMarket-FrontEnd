@@ -1,0 +1,60 @@
+<div class="categorias-container">
+  <!-- Header de categoría -->
+  <div class="categoria-header mb-4">
+    <div class="d-flex align-items-center">
+      <i [class]="getCategoriaInfo().icono + ' fa-3x me-3'" style="color: var(--accent-primary);"></i>
+      <div>
+        <h1 class="mb-0">{{ getCategoriaInfo().nombre }}</h1>
+        <p class="text-muted mt-2">
+          {{ productos.length }} productos encontrados
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+
+  <!-- Grid de productos -->
+  <div *ngIf="!loading" class="row">
+    <div class="col-md-3 col-sm-6 mb-4" *ngFor="let producto of productos">
+      <div class="card h-100 shadow-sm">
+        <div class="card-img-top bg-dark text-center py-4">
+          <i [class]="getCategoriaInfo().icono" style="font-size: 4rem; color: var(--accent-primary);"></i>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">{{ producto.nombre }}</h5>
+          <p class="card-text text-muted">{{ producto.marca }}</p>
+          <p class="card-text small">{{ producto.descripcion | slice:0:80 }}...</p>
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <h4 class="text-primary mb-0">${{ producto.precioVenta }}</h4>
+            <span class="badge bg-success">Stock: {{ producto.stock }}</span>
+          </div>
+        </div>
+        <div class="card-footer bg-transparent border-0">
+          <button 
+            class="btn btn-primary w-100" 
+            (click)="agregarAlCarrito(producto.idProducto)"
+            [disabled]="producto.stock === 0">
+            <i class="fas fa-cart-plus me-2"></i>
+            {{ producto.stock > 0 ? 'Agregar al Carrito' : 'Agotado' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sin resultados -->
+  <div *ngIf="!loading && productos.length === 0" class="text-center py-5">
+    <i class="fas fa-search fa-4x mb-3" style="color: var(--text-muted);"></i>
+    <h3>No hay productos en esta categoría</h3>
+    <p class="text-muted">Pronto tendremos más productos disponibles</p>
+    <a routerLink="/" class="btn btn-primary mt-3">
+      <i class="fas fa-store me-2"></i> Ver todos los productos
+    </a>
+  </div>
+</div>

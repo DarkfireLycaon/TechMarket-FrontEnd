@@ -1,0 +1,60 @@
+.categorias-container {
+  padding: 20px 0;
+}
+
+.categoria-header {
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 2rem;
+}
+
+.categoria-header h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.card-title {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.card-text {
+  color: var(--text-secondary);
+}
+
+.btn-primary {
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .categoria-header {
+    padding: 1rem;
+  }
+  
+  .categoria-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .card-title {
+    font-size: 1rem;
+  }
+}

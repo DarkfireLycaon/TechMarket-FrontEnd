@@ -1,0 +1,19 @@
+<div class="app-container">
+  <!-- Navbar superior -->
+  <app-navbar></app-navbar>
+  
+  <!-- Layout con sidebar -->
+  <div class="main-layout container-fluid">
+    <div class="row">
+      <!-- Sidebar izquierdo -->
+      <div class="col-lg-2 col-md-3 sidebar-col">
+        <app-sidebar-categorias></app-sidebar-categorias>
+      </div>
+      
+      <!-- Contenido principal -->
+      <div class="col-lg-10 col-md-9 main-content-col">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>

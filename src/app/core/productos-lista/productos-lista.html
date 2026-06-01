@@ -1,0 +1,34 @@
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Productos en Oferta</h2>
+  
+  <!-- Filtros -->
+  <div class="mb-4 text-center">
+    <button class="btn btn-outline-primary m-1" (click)="filtrarPorCategoria('')">Todos</button>
+    <button class="btn btn-outline-primary m-1" *ngFor="let cat of categorias" 
+            (click)="filtrarPorCategoria(cat)">
+      {{cat}}
+    </button>
+  </div>
+
+  <!-- Grid de productos -->
+  <div class="row">
+    <div class="col-md-3 mb-4" *ngFor="let producto of productos">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">{{producto.nombre}}</h5>
+          <p class="card-text text-muted">{{producto.marca}}</p>
+          <p class="card-text">{{producto.descripcion | slice:0:80}}...</p>
+          <h4 class="text-primary">${{producto.precioVenta}}</h4>
+          <p class="text-success">Stock: {{producto.stock}} unidades</p>
+        </div>
+        <div class="card-footer bg-white border-0">
+          <button class="btn btn-primary w-100" 
+                  (click)="agregarAlCarrito(producto)"
+                  [disabled]="producto.stock === 0">
+            <i class="bi bi-cart-plus"></i> Agregar al Carrito
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

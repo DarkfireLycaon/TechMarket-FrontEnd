@@ -1,0 +1,46 @@
+.carrito-container {
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.carrito-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.carrito-header {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.carrito-item {
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem;
+}
+
+.carrito-item:hover {
+  background-color: var(--bg-secondary);
+}
+
+.carrito-total {
+  background-color: var(--bg-secondary);
+  padding: 1rem;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.empty-carrito {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-secondary);
+}
+
+.empty-carrito i {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  color: var(--text-muted);
+}

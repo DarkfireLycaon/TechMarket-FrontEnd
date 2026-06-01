@@ -1,0 +1,43 @@
+<div class="container d-flex justify-content-center align-items-center vh-100">
+  <div class="card shadow-lg" style="width: 28rem; border-radius: 15px;">
+    <div class="card-body p-5">
+      <h2 class="text-center mb-4 fw-bold text-success">Crear Cuenta</h2>
+      <p class="text-center text-muted mb-4">Únete al sistema de inventarios</p>
+      
+     <form [formGroup]="registroForm" (ngSubmit)="onRegistro()">
+  <div class="mb-3">
+    <label>Nombre</label>
+    <input type="text" formControlName="nombre" class="form-control"
+           [ngClass]="{'is-invalid': f['nombre'].touched && f['nombre'].errors}">
+    <div class="invalid-feedback" *ngIf="f['nombre'].errors?.['required']">El nombre es obligatorio</div>
+  </div>
+
+  <div class="mb-3">
+    <label>Email</label>
+    <input type="email" formControlName="email" class="form-control"
+           [ngClass]="{'is-invalid': f['email'].touched && f['email'].errors}">
+    <div class="invalid-feedback" *ngIf="f['email'].errors?.['email']">Email no válido</div>
+  </div>
+
+  <div class="mb-3">
+    <label>Contraseña</label>
+    <input type="password" formControlName="password" class="form-control"
+           [ngClass]="{'is-invalid': f['password'].touched && f['password'].errors}">
+    <div class="invalid-feedback">Mínimo 6 caracteres</div>
+  </div>
+
+  <button type="submit" [disabled]="registroForm.invalid" class="btn btn-primary w-100">
+    Registrarse
+  </button>
+     <div class="d-flex justify-content-between align-items-center mt-3 px-1">
+  <p class="mb-0 small">
+    <a routerLink="/login" class="fw-bold text-decoration-none hover-link">Ya Tienes cuenta? Inicia Sesión</a>
+  </p>
+  <p class="mb-0 small">
+    <a routerLink="/olvide" class=" text-decoration-none hover-link">¿Olvidaste tu contraseña?</a>
+  </p>
+</div>
+</form>
+    
+  </div>
+</div>

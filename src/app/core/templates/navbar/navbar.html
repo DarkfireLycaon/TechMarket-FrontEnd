@@ -1,0 +1,83 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+  <div class="container">
+    <!-- Logo -->
+    <a class="navbar-brand" routerLink="/">
+      <i class="fas fa-store me-2"></i>
+      <strong>TechMarket</strong>
+    </a>
+
+    <!-- Botón hamburguesa -->
+    <button 
+      class="navbar-toggler" 
+      type="button" 
+      (click)="toggleMenu()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Contenido colapsable -->
+    <div class="collapse navbar-collapse" [ngClass]="{'show': isMenuOpen}">
+      
+      <!-- Menú izquierda -->
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/ofertas">Ofertas</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/servicios-techmarket">Servicios</a>
+        </li>
+      </ul>
+
+      <!-- Buscador -->
+      <div class="mx-auto w-50">
+        <div class="input-group">
+          <input 
+            type="text" 
+            class="form-control search-input" 
+            placeholder="Buscar..." 
+            [(ngModel)]="searchTerm"
+            (keyup.enter)="buscarProductos()">
+          <button class="btn btn-light" (click)="buscarProductos()">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Menú derecha -->
+      <ul class="navbar-nav ms-auto">
+        <!-- Usuario logueado -->
+        <li class="nav-item dropdown" *ngIf="isLoggedIn">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+            <i class="fas fa-user-circle"></i> {{ usuarioNombre }}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" routerLink="/perfil">Mi Perfil</a></li>
+            <li><a class="dropdown-item" routerLink="/mis-pedidos">Mis Pedidos</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li *ngIf="isAdmin"><a class="dropdown-item" routerLink="/admin">Panel Admin</a></li>
+            <li><a class="dropdown-item text-danger" (click)="logout()">Cerrar Sesión</a></li>
+          </ul>
+        </li>
+
+        <!-- Botón Login/Registro -->
+        <ng-container *ngIf="!isLoggedIn">
+          <li class="nav-item"><a class="nav-link" routerLink="/login">Login</a></li>
+          <li class="nav-item"><a class="nav-link" routerLink="/registro">Registro</a></li>
+        </ng-container>
+
+        <!-- Carrito (FUERA del dropdown) -->
+        <li class="nav-item">
+          <a class="nav-link position-relative" routerLink="/carrito">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle" 
+                  *ngIf="carritoItems > 0">
+              {{ carritoItems }}
+            </span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

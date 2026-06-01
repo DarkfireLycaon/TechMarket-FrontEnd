@@ -1,0 +1,70 @@
+<div class="container mt-4">
+  <div class="card bg-dark-glass text-white p-4 shadow-lg border-0">
+    <h2 class="mb-4">Registrar Nueva Venta</h2>
+
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label text-muted small fw-bold">CLIENTE</label>
+        <select class="form-select bg-dark text-white border-secondary" 
+                [(ngModel)]="venta.cliente">
+          <option [ngValue]="undefined" disabled>Seleccione un cliente...</option>
+          @for (c of clientes; track c.idCliente) {
+            <option [ngValue]="c">{{ c.nombre }} {{ c.apellido }}</option>
+          }
+        </select>
+      </div>
+
+      <hr class="my-4 border-secondary opacity-25">
+
+      <div class="col-md-5">
+        <label class="form-label text-muted small fw-bold">PRODUCTO</label>
+        <select class="form-select bg-dark text-white border-secondary" 
+                [(ngModel)]="productoSeleccionado">
+          <option [ngValue]="productoNulo" disabled>Elegir producto...</option>
+          @for (p of productos; track p.idProducto) {
+            <option [ngValue]="p">{{ p.descripcion }} (Stock: {{ p.stock }})</option>
+          }
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label text-muted small fw-bold">CANTIDAD</label>
+        <input type="number" class="form-control bg-dark text-white border-secondary" [(ngModel)]="cantidadNueva">
+      </div>
+      <div class="col-md-2 d-flex align-items-end">
+        <button class="btn btn-emerald w-100" (click)="agregarProducto()">
+          <i class="bi bi-plus-lg"></i> Añadir
+        </button>
+      </div>
+    </div>
+
+    <div class="table-responsive mt-4">
+      <table class="table table-dark table-hover border-secondary">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Cant.</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (d of venta.detalles; track $index) {
+            <tr>
+              <td>{{ d.producto.descripcion }}</td>
+              <td>{{ d.precioVenta | currency }}</td>
+              <td>{{ d.cantidad }}</td>
+              <td>{{ (d.precioVenta * d.cantidad) | currency }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <h3 class="text-emerald">Total: {{ venta.total | currency }}</h3>
+      <button class="btn btn-purple-gradient btn-lg px-5" (click)="guardarVenta()">
+        Finalizar Venta
+      </button>
+    </div>
+  </div>
+</div>

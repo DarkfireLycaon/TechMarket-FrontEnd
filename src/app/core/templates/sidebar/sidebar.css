@@ -1,0 +1,73 @@
+.sidebar-categorias {
+  background-color: var(--bg-card);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  position: sticky;
+  top: 80px;
+}
+
+.sidebar-header {
+  padding: 1rem;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.categorias-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.categorias-list li {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.categorias-list li:last-child {
+  border-bottom: none;
+}
+
+.categorias-list a {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  gap: 12px;
+}
+
+.categorias-list a i {
+  width: 24px;
+  font-size: 1.1rem;
+}
+
+.categorias-list a span {
+  flex: 1;
+}
+
+.categorias-list a .badge {
+  background-color: var(--bg-input);
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+}
+
+.categorias-list a:hover {
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+  padding-left: 1.5rem;
+}
+
+.categorias-list a.active {
+  background-color: var(--accent-primary);
+  color: white;
+}
+
+.categorias-list a.active .badge {
+  background-color: white;
+  color: var(--accent-primary);
+}
