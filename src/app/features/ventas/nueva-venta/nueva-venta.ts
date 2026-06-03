@@ -2,12 +2,13 @@ import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Venta } from '../../../core/venta/venta';
 import { Cliente } from '../../../core/cliente/cliente';
 import { Producto } from '../../../core/producto/producto';
-import { ClienteService } from '../../../core/cliente-service';
-import { ProductoService } from '../../../core/producto.service';
-import { VentaService } from '../../../core/venta-service';
+
 import { DetalleVenta } from '../../../core/detalle-venta/detalle-venta';
 import { FormsModule } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
+import { ClienteService } from '../../../service/cliente-service';
+import { ProductoService } from '../../../service/producto.service';
+import { VentaService } from '../../../service/venta-service';
 
 @Component({
   selector: 'app-nueva-venta',

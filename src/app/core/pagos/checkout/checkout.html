@@ -1,0 +1,144 @@
+<div class="container py-5">
+  <h1 class="h2 mb-4 text-light">
+    <i class="fas fa-credit-card me-2"></i>Finalizar Compra
+  </h1>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+
+  <div *ngIf="!loading" class="row">
+    
+    <!-- Formulario de datos -->
+    <div class="col-lg-7">
+      <div class="card bg-dark border-secondary mb-4">
+        <div class="card-header bg-secondary bg-opacity-25 border-secondary">
+          <h5 class="mb-0 text-light">
+            <i class="fas fa-user me-2"></i>Datos de facturación
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label text-light">Nombre completo *</label>
+              <input type="text" class="form-control bg-dark text-light border-secondary" 
+                     [(ngModel)]="cliente.nombre">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label text-light">Email *</label>
+              <input type="email" class="form-control bg-dark text-light border-secondary" 
+                     [(ngModel)]="cliente.email">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label text-light">Teléfono *</label>
+              <input type="tel" class="form-control bg-dark text-light border-secondary" 
+                     [(ngModel)]="cliente.telefono">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label text-light">Código Postal</label>
+              <input type="text" class="form-control bg-dark text-light border-secondary" 
+                     [(ngModel)]="cliente.codigoPostal">
+            </div>
+            <div class="col-12 mb-3">
+              <label class="form-label text-light">Dirección *</label>
+              <input type="text" class="form-control bg-dark text-light border-secondary" 
+                     [(ngModel)]="cliente.direccion" placeholder="Calle y número">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label text-light">Ciudad *</label>
+              <input type="text" class="form-control bg-dark text-light border-secondary" 
+                     [(ngModel)]="cliente.ciudad">
+            </div>
+            <div class="col-12 mb-3">
+              <label class="form-label text-light">Notas adicionales</label>
+              <textarea class="form-control bg-dark text-light border-secondary" rows="3" 
+                        [(ngModel)]="cliente.notas" 
+                        placeholder="Instrucciones de entrega, etc."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Método de pago -->
+      <div class="card bg-dark border-secondary">
+        <div class="card-header bg-secondary bg-opacity-25 border-secondary">
+          <h5 class="mb-0 text-light">
+            <i class="fas fa-wallet me-2"></i>Método de pago
+          </h5>
+        </div>
+        <div class="card-body">
+          <div *ngFor="let metodo of metodosPago" class="form-check mb-2">
+            <input class="form-check-input" type="radio" 
+                   [value]="metodo.valor" 
+                   [(ngModel)]="metodoPago"
+                   name="metodoPago"
+                   [id]="'pago_' + metodo.valor">
+            <label class="form-check-label text-light" [for]="'pago_' + metodo.valor">
+              <i [class]="metodo.icono + ' me-2'"></i>{{ metodo.nombre }}
+            </label>
+          </div>
+          
+          <div class="alert alert-info mt-3 small" *ngIf="metodoPago === 'mercadoPago'">
+            <i class="fab fa-mercadopago me-2"></i>
+            Serás redirigido a Mercado Pago para completar el pago de forma segura.
+          </div>
+          <div class="alert alert-secondary mt-3 small" *ngIf="metodoPago === 'efectivo'">
+            <i class="fas fa-money-bill me-2"></i>
+            Pagas al recibir el producto. Solo aceptamos efectivo.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen del pedido -->
+    <div class="col-lg-5">
+      <div class="card bg-dark border-secondary">
+        <div class="card-header bg-secondary bg-opacity-25 border-secondary">
+          <h5 class="mb-0 text-light">Resumen del pedido</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3" *ngFor="let item of carrito.items">
+            <div class="d-flex justify-content-between small mb-2">
+              <span class="text-secondary">
+                {{ item.cantidad }}x {{ item.producto?.nombre }}
+              </span>
+              <span class="text-light">${{ item.subtotal | number }}</span>
+            </div>
+          </div>
+          <hr class="border-secondary">
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-secondary">Subtotal:</span>
+            <span class="text-light">${{ calcularTotal() | number }}</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-secondary">Envío:</span>
+            <span class="text-light">${{ calcularEnvio() | number }}</span>
+          </div>
+          <hr class="border-secondary">
+          <div class="d-flex justify-content-between mb-3">
+            <span class="fw-bold text-light">Total:</span>
+            <span class="fw-bold text-primary fs-4">${{ calcularTotalConEnvio() | number }}</span>
+          </div>
+          
+          <button class="btn btn-primary w-100 btn-lg" 
+                  (click)="procesarPago()" 
+                  [disabled]="procesando">
+            <span *ngIf="!procesando">
+              <i class="fas fa-check-circle me-2"></i>Confirmar pedido
+            </span>
+            <span *ngIf="procesando">
+              <span class="spinner-border spinner-border-sm me-2"></span>Procesando...
+            </span>
+          </button>
+          
+          <button class="btn btn-outline-secondary w-100 mt-2" routerLink="/carrito">
+            <i class="fas fa-arrow-left me-2"></i>Volver al carrito
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

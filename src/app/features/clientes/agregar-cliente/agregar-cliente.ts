@@ -1,8 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Cliente } from '../../../core/cliente/cliente';
-import { ClienteService } from '../../../core/cliente-service';
+
 import { Router } from '@angular/router';
+import { ClienteService } from '../../../service/cliente-service';
 
 @Component({
   selector: 'app-agregar-cliente',

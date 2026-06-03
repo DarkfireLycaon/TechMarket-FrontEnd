@@ -3,7 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Proveedor } from '../../../core/proveedor/proveedor';
-import { ProveedorService } from '../../../core/proveedor.service';
+import { ProveedorService } from '../../../service/proveedor.service';
+
 
 @Component({
   selector: 'app-editar-proveedor',

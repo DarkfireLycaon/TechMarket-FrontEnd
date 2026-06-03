@@ -3,7 +3,8 @@ import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Proveedor } from '../../../core/proveedor/proveedor';
 
 import { Router, RouterLink } from '@angular/router';
-import { ProveedorService } from '../../../core/proveedor.service';
+import { ProveedorService } from '../../../service/proveedor.service';
+
 
 @Component({
   selector: 'app-proveedor-lista',

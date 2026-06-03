@@ -1,9 +1,10 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { AuthService } from '../../service/auth';
+
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import Swal from 'sweetalert2';
+import { AuthService } from '../../../service/auth';
 
 @Component({
   selector: 'app-olvide-password',

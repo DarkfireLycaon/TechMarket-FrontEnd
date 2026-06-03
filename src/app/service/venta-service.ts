@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Venta } from './venta/venta';
 import { environment } from '../../environments/environment';
+import { Venta } from '../core/venta/venta';
 
 
 @Injectable({

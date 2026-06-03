@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProductoService } from '../../core/producto.service';
+import { ProductoService } from '../../service/producto.service';
 
 @Component({
   selector: 'app-ofertas',

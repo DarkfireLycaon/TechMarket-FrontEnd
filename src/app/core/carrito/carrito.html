@@ -1,5 +1,114 @@
-<p>carrito works!</p>
 <div class="container py-5">
-  <h1 class="text-light">Carrito de Compras</h1>
-  <p class="text-secondary">Aquí se mostrarán tus productos...</p>
+  <h1 class="h2 mb-4 text-light">
+    <i class="fas fa-shopping-cart me-2"></i>Mi Carrito
+  </h1>
+
+  <!-- Debug: mostrar lo que llega -->
+  
+
+  <!-- Carrito vacío -->
+ <div *ngIf="!carrito || !carrito.items || carrito.items.length === 0">
+    <i class="fas fa-shopping-basket fa-4x mb-3 text-secondary"></i>
+    <h3 class="text-light">Tu carrito está vacío</h3>
+    <p class="text-secondary">¡Explora nuestros productos y comienza a comprar!</p>
+    <a routerLink="/" class="btn btn-primary mt-3">
+      <i class="fas fa-store me-2"></i>Ver productos
+    </a>
+  </div>
+
+  <!-- Carrito con productos -->
+  <div *ngIf="carrito?.items && carrito.items.length > 0" class="row">
+    
+    <!-- Lista de productos -->
+    <div class="col-lg-8">
+      <div class="card bg-dark border-secondary">
+        <div class="card-header bg-secondary bg-opacity-25 border-secondary">
+          <h5 class="mb-0 text-light">Productos ({{ carrito.items.length }})</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-dark table-hover mb-0">
+              <thead>
+                <tr class="border-secondary">
+                  <th>Producto</th>
+                  <th>Precio</th>
+                  <th>Cantidad</th>
+                  <th>Subtotal</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of carrito.items" class="border-secondary">
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="bg-dark rounded p-2 me-3" style="width: 50px; height: 50px;">
+                        <i [class]="getIconoCategoria(item.producto?.categoria)" class="fa-2x text-primary"></i>
+                      </div>
+                      <div>
+                        <h6 class="mb-0 text-light">{{ item.producto?.nombre }}</h6>
+                        <small class="text-secondary">{{ item.producto?.marca }}</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="text-light">${{ item.precioUnitario | number }}</td>
+                  <td style="width: 120px;">
+                    <div class="input-group input-group-sm">
+                      <button class="btn btn-outline-secondary" (click)="actualizarCantidad(item.producto?.idProducto, item.cantidad - 1)">
+                        <i class="fas fa-minus"></i>
+                      </button>
+                      <input 
+                        type="number" 
+                        class="form-control text-center bg-dark text-light border-secondary" 
+                        [value]="item.cantidad"
+                        (change)="cambiarCantidad(item.producto?.idProducto, $any($event.target).value)"
+                        style="width: 50px;">
+                      <button class="btn btn-outline-secondary" (click)="actualizarCantidad(item.producto?.idProducto, item.cantidad + 1)">
+                        <i class="fas fa-plus"></i>
+                      </button>
+                    </div>
+                  </td>
+                  <td class="text-primary fw-bold">${{ item.subtotal | number }}</td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-danger" (click)="eliminarProducto(item.producto?.idProducto)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen del pedido -->
+    <div class="col-lg-4 mt-4 mt-lg-0">
+      <div class="card bg-dark border-secondary">
+        <div class="card-header bg-secondary bg-opacity-25 border-secondary">
+          <h5 class="mb-0 text-light">Resumen del pedido</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-secondary">Subtotal:</span>
+            <span class="text-light">${{ calcularTotal() | number }}</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-secondary">Envío:</span>
+            <span class="text-light">${{ calcularEnvio() | number }}</span>
+          </div>
+          <hr class="border-secondary">
+          <div class="d-flex justify-content-between mb-3">
+            <span class="fw-bold text-light">Total:</span>
+            <span class="fw-bold text-primary fs-4">${{ calcularTotalConEnvio() | number }}</span>
+          </div>
+          <button class="btn btn-primary w-100 mb-2" (click)="procederPago()">
+            <i class="fas fa-credit-card me-2"></i>Proceder al pago
+          </button>
+          <button class="btn btn-outline-danger w-100" (click)="vaciarCarrito()">
+            <i class="fas fa-trash-alt me-2"></i>Vaciar carrito
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

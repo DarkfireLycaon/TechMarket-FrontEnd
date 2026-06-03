@@ -1,20 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';  // ← Agregar esta
-import { FormsModule } from '@angular/forms';   // ← Agregar esta
-import { RouterModule, Router } from '@angular/router';  // ← Agregar RouterModule
-import { AuthService } from '../../service/auth';
-import { CarritoService } from '../../carrito.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterModule, Router } from '@angular/router';
+import { AuthService } from '../../../service/auth';
+import { CarritoService } from '../../../service/carrito.service';
+
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.html',
   styleUrls: ['./navbar.css'],
-  standalone: true,
-  imports: [
-    CommonModule,    // ← Agregado
-    FormsModule,     // ← Agregado
-    RouterModule     // ← Agregado
-  ]
+    standalone: true,
+
+  imports: [CommonModule, FormsModule, RouterModule]
 })
 export class NavbarComponent implements OnInit {
 
@@ -23,7 +21,8 @@ export class NavbarComponent implements OnInit {
   searchTerm = '';
   carritoItems = 0;
   isMenuOpen = false;
-isAdmin = false;
+  isAdmin = false;
+
   constructor(
     private authService: AuthService,
     private carritoService: CarritoService,
@@ -34,7 +33,6 @@ isAdmin = false;
     this.verificarSesion();
     this.actualizarCarrito();
     
-    // Escuchar cambios en el carrito
     this.carritoService.carritoActualizado$.subscribe(() => {
       this.actualizarCarrito();
     });
@@ -50,6 +48,11 @@ isAdmin = false;
   }
 
   actualizarCarrito(): void {
+    if (!this.isLoggedIn) {
+      this.carritoItems = 0;
+      return;
+    }
+    
     this.carritoService.obtenerCarrito().subscribe({
       next: (carrito) => {
         this.carritoItems = carrito.items?.length || 0;
@@ -70,14 +73,19 @@ isAdmin = false;
     }
   }
 
+  irAlCarrito(): void {
+    this.router.navigate(['/carrito']);
+  }
+
   logout(): void {
     this.authService.logout();
     this.isLoggedIn = false;
+    this.isAdmin = false;
+    this.carritoItems = 0;
     this.router.navigate(['/login']);
   }
 
   toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;
   }
-  
 }

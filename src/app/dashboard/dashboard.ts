@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { Venta } from '../core/venta/venta';
-import { VentaService } from '../core/venta-service';
+import { VentaService } from '../service/venta-service';
+
 
 @Component({
   selector: 'app-dashboard',

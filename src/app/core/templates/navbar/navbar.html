@@ -69,13 +69,12 @@
 
         <!-- Carrito (FUERA del dropdown) -->
         <li class="nav-item">
-          <a class="nav-link position-relative" routerLink="/carrito">
-            <i class="fas fa-shopping-cart"></i>
-            <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle" 
-                  *ngIf="carritoItems > 0">
-              {{ carritoItems }}
-            </span>
-          </a>
+         <a class="nav-link position-relative" (click)="irAlCarrito()">
+  <i class="fas fa-shopping-cart"></i>
+  <span class="badge bg-danger rounded-pill" *ngIf="carritoItems > 0">
+    {{ carritoItems }}
+  </span>
+</a>
         </li>
       </ul>
     </div>

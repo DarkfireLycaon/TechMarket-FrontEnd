@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../service/auth';
+
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common'; // <--- Importante para ngIf
 import Swal from 'sweetalert2';
+import { AuthService } from '../../../service/auth';
 
 @Component({
   selector: 'app-registro',

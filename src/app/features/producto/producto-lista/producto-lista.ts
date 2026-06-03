@@ -2,8 +2,9 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { ProductoService } from '../../../core/producto.service';
+
 import { Producto } from '../../../core/producto/producto';
+import { ProductoService } from '../../../service/producto.service';
 
 @Component({
   selector: 'app-producto-lista',

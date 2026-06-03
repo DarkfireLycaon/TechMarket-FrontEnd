@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { ProductoService } from '../../core/producto.service';
-import { CarritoService } from '../../core/carrito.service';
+import { ProductoService } from '../../service/producto.service';
+import { CarritoService } from '../../service/carrito.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -20,13 +20,15 @@ export class Categorias implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private productoService: ProductoService,
-    private carritoService: CarritoService
+    private carritoService: CarritoService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.categoriaActual = params['categoria'];
       this.cargarProductosPorCategoria();
+
     });
   }
 
@@ -52,11 +54,13 @@ export class Categorias implements OnInit {
       next: (data) => {
         this.productos = data;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error al cargar productos:', error);
         this.loading = false;
         this.mostrarNotificacion('Error al cargar productos', 'error');
+        this.cdr.detectChanges();
       }
     });
   }

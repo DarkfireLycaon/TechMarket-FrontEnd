@@ -21,6 +21,8 @@ import { BuscarProductos } from './core/templates/buscador/buscar-productos/busc
 import { Categorias } from './core/categorias/categorias';
 import { Carrito } from './core/carrito/carrito';
 import { ServiciosTechmarket } from './core/servicios-techmarket/servicios-techmarket';
+import { Checkout } from './core/pagos/checkout/checkout';
+import { MisPedidos } from './core/mis-pedidos/mis-pedidos';
 
 // ... (todos tus imports se mantienen igual)
 
@@ -53,7 +55,9 @@ export const routes: Routes = [
             { path: 'carrito', component: Carrito }, 
             { path: 'servicios-techmarket', component: ServiciosTechmarket }, // ← Asegurar que existe
             // Redirección por defecto si el usuario está logueado pero entra a la raíz
-            { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+            { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+             { path: 'checkout', component: Checkout },
+  { path: 'mis-pedidos', component: MisPedidos}
         ]
     },
 

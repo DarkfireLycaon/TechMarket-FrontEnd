@@ -3,7 +3,8 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Producto } from '../../../core/producto/producto';
-import { ProductoService } from '../../../core/producto.service';
+import { ProductoService } from '../../../service/producto.service';
+
 
 @Component({
   selector: 'app-editar-producto',

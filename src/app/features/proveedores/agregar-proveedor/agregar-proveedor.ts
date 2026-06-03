@@ -3,7 +3,8 @@ import { Proveedor } from '../../../core/proveedor/proveedor';
 
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { ProveedorService } from '../../../core/proveedor.service';
+import { ProveedorService } from '../../../service/proveedor.service';
+
 
 @Component({
   selector: 'app-agregar-proveedor',

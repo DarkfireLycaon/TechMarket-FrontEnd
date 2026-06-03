@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ProductoService } from '../../../producto.service';
+import { ProductoService } from '../../../../service/producto.service';
 
 @Component({
   selector: 'app-buscar-productos',

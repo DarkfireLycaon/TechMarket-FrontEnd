@@ -1,8 +1,9 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Cliente } from '../../../core/cliente/cliente';
-import { ClienteService } from '../../../core/cliente-service';
+
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { ClienteService } from '../../../service/cliente-service';
 
 @Component({
   selector: 'app-clientes-lista',

@@ -15,7 +15,7 @@ export class sidebar implements OnInit {
     { nombre: 'Informática', icono: 'fas fa-laptop', ruta: '/categorias/informatica', count: 128 },
     { nombre: 'Videojuegos', icono: 'fas fa-gamepad', ruta: '/categorias/videojuegos', count: 89 },
     { nombre: 'Telefonía', icono: 'fas fa-mobile-alt', ruta: '/categorias/telefonia', count: 67 },
-    { nombre: 'Electrodomésticos', icono: 'fas fa-冰箱', ruta: '/categorias/electrodomesticos', count: 56 },
+    { nombre: 'Electrodomésticos', icono: 'fas fa-blender', ruta: '/categorias/electrodomesticos', count: 56 },
     { nombre: 'Audio', icono: 'fas fa-headphones', ruta: '/categorias/audio', count: 43 },
     { nombre: 'Fotografía', icono: 'fas fa-camera', ruta: '/categorias/fotografia', count: 34 },
     { nombre: 'Smart Home', icono: 'fas fa-home', ruta: '/categorias/smart-home', count: 28 },

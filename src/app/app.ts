@@ -1,10 +1,10 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, RouterModule, Router } from '@angular/router';
-import { AuthService } from './core/service/auth';
+import { AuthService } from './service/auth';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from "./core/templates/navbar/navbar";
-import { sidebar } from "./core/templates/sidebar/sidebar"; 
+import { sidebar } from "./core/templates/sidebar/sidebar";
 
 @Component({
   selector: 'app-root',
@@ -14,8 +14,7 @@ import { sidebar } from "./core/templates/sidebar/sidebar";
     RouterLinkActive,
     RouterModule,
     CommonModule,
-    NavbarComponent // ← Navbar incluido
-    ,
+    NavbarComponent,
     sidebar
 ],
   templateUrl: './app.html',

@@ -2,7 +2,8 @@ import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Cliente } from '../../../core/cliente/cliente';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ClienteService } from '../../../core/cliente-service';
+import { ClienteService } from '../../../service/cliente-service';
+
 
 @Component({
   selector: 'app-editar-cliente',

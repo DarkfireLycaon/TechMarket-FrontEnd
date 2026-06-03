@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Venta } from '../../../core/venta/venta';
-import { VentaService } from '../../../core/venta-service';
 import { RouterLink } from "@angular/router";
+import { VentaService } from '../../../service/venta-service';
 
 @Component({
   selector: 'app-ventas-lista',

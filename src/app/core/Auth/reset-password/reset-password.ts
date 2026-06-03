@@ -2,8 +2,9 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
-import { AuthService } from '../../service/auth';
+
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../service/auth';
 
 @Component({
   selector: 'app-reset-password',
