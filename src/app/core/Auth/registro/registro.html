@@ -1,43 +1,75 @@
-<div class="container d-flex justify-content-center align-items-center vh-100">
-  <div class="card shadow-lg" style="width: 28rem; border-radius: 15px;">
+<div class="container d-flex justify-content-center align-items-center my-5">
+  <div class="card shadow-lg bg-dark text-light border-secondary" style="width: 32rem; border-radius: 15px;">
     <div class="card-body p-5">
       <h2 class="text-center mb-4 fw-bold text-success">Crear Cuenta</h2>
       <p class="text-center text-muted mb-4">Únete al sistema de inventarios</p>
       
-     <form [formGroup]="registroForm" (ngSubmit)="onRegistro()">
-  <div class="mb-3">
-    <label>Nombre</label>
-    <input type="text" formControlName="nombre" class="form-control"
-           [ngClass]="{'is-invalid': f['nombre'].touched && f['nombre'].errors}">
-    <div class="invalid-feedback" *ngIf="f['nombre'].errors?.['required']">El nombre es obligatorio</div>
-  </div>
+      <form [formGroup]="registroForm" (ngSubmit)="onRegistro()">
+        
+        <div class="mb-3">
+          <label class="form-label">Nombre *</label>
+          <input type="text" formControlName="nombre" class="form-control bg-dark text-light border-secondary"
+                 [ngClass]="{'is-invalid': f['nombre'].touched && f['nombre'].errors}">
+          <div class="invalid-feedback" *ngIf="f['nombre'].errors?.['required']">El nombre es obligatorio</div>
+        </div>
 
-  <div class="mb-3">
-    <label>Email</label>
-    <input type="email" formControlName="email" class="form-control"
-           [ngClass]="{'is-invalid': f['email'].touched && f['email'].errors}">
-    <div class="invalid-feedback" *ngIf="f['email'].errors?.['email']">Email no válido</div>
-  </div>
+        <div class="mb-3">
+          <label class="form-label">Email *</label>
+          <input type="email" formControlName="email" class="form-control bg-dark text-light border-secondary"
+                 [ngClass]="{'is-invalid': f['email'].touched && f['email'].errors}">
+          <div class="invalid-feedback" *ngIf="f['email'].errors?.['required']">El email es obligatorio</div>
+          <div class="invalid-feedback" *ngIf="f['email'].errors?.['email']">Email no válido</div>
+        </div>
 
-  <div class="mb-3">
-    <label>Contraseña</label>
-    <input type="password" formControlName="password" class="form-control"
-           [ngClass]="{'is-invalid': f['password'].touched && f['password'].errors}">
-    <div class="invalid-feedback">Mínimo 6 caracteres</div>
-  </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Teléfono *</label>
+            <input type="tel" formControlName="telefono" class="form-control bg-dark text-light border-secondary"
+                   [ngClass]="{'is-invalid': f['telefono'].touched && f['telefono'].errors}">
+            <div class="invalid-feedback" *ngIf="f['telefono'].errors?.['required']">El teléfono es obligatorio</div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Ciudad *</label>
+            <input type="text" formControlName="ciudad" class="form-control bg-dark text-light border-secondary"
+                   [ngClass]="{'is-invalid': f['ciudad'].touched && f['ciudad'].errors}">
+            <div class="invalid-feedback" *ngIf="f['ciudad'].errors?.['required']">La ciudad es obligatoria</div>
+          </div>
+        </div>
 
-  <button type="submit" [disabled]="registroForm.invalid" class="btn btn-primary w-100">
-    Registrarse
-  </button>
-     <div class="d-flex justify-content-between align-items-center mt-3 px-1">
-  <p class="mb-0 small">
-    <a routerLink="/login" class="fw-bold text-decoration-none hover-link">Ya Tienes cuenta? Inicia Sesión</a>
-  </p>
-  <p class="mb-0 small">
-    <a routerLink="/olvide" class=" text-decoration-none hover-link">¿Olvidaste tu contraseña?</a>
-  </p>
-</div>
-</form>
-    
+        <div class="row">
+          <div class="col-md-8 mb-3">
+            <label class="form-label">Dirección <span class="text-muted small">(Opcional)</span></label>
+            <input type="text" formControlName="direccion" class="form-control bg-dark text-light border-secondary" placeholder="Calle y número">
+          </div>
+          
+          <div class="col-md-4 mb-3">
+            <label class="form-label">C. Postal <span class="text-muted small">(Opcional)</span></label>
+            <input type="text" formControlName="codigoPostal" class="form-control bg-dark text-light border-secondary">
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label">Contraseña *</label>
+          <input type="password" formControlName="password" class="form-control bg-dark text-light border-secondary"
+                 [ngClass]="{'is-invalid': f['password'].touched && f['password'].errors}">
+          <div class="invalid-feedback" *ngIf="f['password'].errors?.['required']">La contraseña es obligatoria</div>
+          <div class="invalid-feedback" *ngIf="f['password'].errors?.['minlength']">Mínimo 6 caracteres</div>
+        </div>
+
+        <button type="submit" [disabled]="registroForm.invalid" class="btn btn-success w-100 fw-bold py-2">
+          Registrarse
+        </button>
+
+        <div class="d-flex justify-content-between align-items-center mt-3 px-1">
+          <p class="mb-0 small">
+            <a routerLink="/login" class="fw-bold text-decoration-none text-success">¿Ya tienes cuenta? Inicia Sesión</a>
+          </p>
+          <p class="mb-0 small">
+            <a routerLink="/olvide" class="text-muted text-decoration-none">¿Olvidaste tu contraseña?</a>
+          </p>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

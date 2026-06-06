@@ -1,0 +1,73 @@
+<div class="container my-5 d-flex justify-content-center">
+  <div class="card shadow-lg bg-dark text-light border-secondary" style="width: 35rem; border-radius: 15px;">
+    <div class="card-body p-5">
+      
+      <h2 class="text-center mb-2 fw-bold text-success">Mi Perfil</h2>
+      <p class="text-center text-muted mb-4">Mantén tus datos de envío y contacto actualizados</p>
+
+      <div *ngIf="cargando" class="text-center my-4">
+        <div class="spinner-border text-success" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+      </div>
+
+      <form *ngIf="!cargando" [formGroup]="perfilForm" (ngSubmit)="onGuardarCambios()">
+        
+        <div class="mb-3">
+          <label class="form-label">Nombre Completo *</label>
+          <input type="text" formControlName="nombre" class="form-control bg-dark text-light border-secondary"
+                 [ngClass]="{'is-invalid': f['nombre'].touched && f['nombre'].errors}">
+          <div class="invalid-feedback" *ngIf="f['nombre'].errors?.['required']">El nombre es obligatorio</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Correo Electrónico</label>
+          <input type="email" formControlName="email" class="form-control bg-secondary text-light border-secondary text-muted" readonly>
+          <small class="text-muted">El correo electrónico no se puede modificar.</small>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Teléfono *</label>
+            <input type="tel" formControlName="telefono" class="form-control bg-dark text-light border-secondary"
+                   [ngClass]="{'is-invalid': f['telefono'].touched && f['telefono'].errors}">
+            <div class="invalid-feedback" *ngIf="f['telefono'].errors?.['required']">El teléfono es obligatorio</div>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Ciudad *</label>
+            <input type="text" formControlName="ciudad" class="form-control bg-dark text-light border-secondary"
+                   [ngClass]="{'is-invalid': f['ciudad'].touched && f['ciudad'].errors}">
+            <div class="invalid-feedback" *ngIf="f['ciudad'].errors?.['required']">La ciudad es obligatoria</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-8 mb-3">
+            <label class="form-label">Dirección de Envío <span class="text-muted small">(Opcional)</span></label>
+            <input type="text" formControlName="direccion" class="form-control bg-dark text-light border-secondary" placeholder="Calle, número, departamento">
+          </div>
+          
+          <div class="col-md-4 mb-3">
+            <label class="form-label">C. Postal <span class="text-muted small">(Opcional)</span></label>
+            <input type="text" formControlName="codigoPostal" class="form-control bg-dark text-light border-secondary">
+          </div>
+        </div>
+
+        <div class="mt-4 row g-2">
+          <div class="col-sm-6">
+            <button type="submit" [disabled]="perfilForm.invalid || procesando" class="btn btn-success w-100 fw-bold py-2">
+              <span *ngIf="procesando" class="spinner-border spinner-border-sm me-1"></span>
+              Guardar Cambios
+            </button>
+          </div>
+          <div class="col-sm-6">
+            <a routerLink="/mis-pedidos" class="btn btn-outline-secondary w-100 py-2">Volver</a>
+          </div>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>

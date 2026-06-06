@@ -22,9 +22,11 @@ import { Categorias } from './core/categorias/categorias';
 import { Carrito } from './core/carrito/carrito';
 import { ServiciosTechmarket } from './core/servicios-techmarket/servicios-techmarket';
 import { Checkout } from './core/pagos/checkout/checkout';
-import { MisPedidos } from './core/mis-pedidos/mis-pedidos';
 
-// ... (todos tus imports se mantienen igual)
+// 1. NUEVO IMPORT: Asegúrate de que la ruta del archivo coincide con tu estructura de carpetas
+import { PagoExito } from './core/pagos/pago-exito/pago-exito'; 
+import { Perfil } from './perfil/perfil';
+import { MisPedidos } from './perfil/mis-pedidos/mis-pedidos';
 
 export const routes: Routes = [
     // --- RUTAS PÚBLICAS ---
@@ -49,19 +51,21 @@ export const routes: Routes = [
             { path: 'editar-cliente/:id', component: EditarCliente },
             { path: 'ventas', component: VentasLista },
             { path: 'nueva-venta', component: NuevaVenta },
-            {path: 'ofertas', component: Ofertas},
+            { path: 'ofertas', component: Ofertas},
             { path: 'categorias/:categoria', component: Categorias},
             { path: 'productos/buscar', component: BuscarProductos },
             { path: 'carrito', component: Carrito }, 
-            { path: 'servicios-techmarket', component: ServiciosTechmarket }, // ← Asegurar que existe
+            { path: 'servicios-techmarket', component: ServiciosTechmarket },
+            { path: 'checkout', component: Checkout },
+            { path: 'mis-pedidos', component: MisPedidos},
+            // 2. NUEVA RUTA: Protegida para recibir al usuario tras el pago de PayPal
+            { path: 'pago-exito', component: PagoExito },
+            { path: 'perfil', component: Perfil },
             // Redirección por defecto si el usuario está logueado pero entra a la raíz
-            { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-             { path: 'checkout', component: Checkout },
-  { path: 'mis-pedidos', component: MisPedidos}
+            { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
     },
 
     // --- COMODÍN ---
-    // Si escriben cualquier otra cosa, los manda al login
     { path: '**', redirectTo: 'login' }
 ];

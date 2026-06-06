@@ -1,148 +1,186 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
-import { CarritoService } from '../../../service/carrito.service';
-import { PedidoService } from '../../../service/pedido.service';
-import { AuthService } from '../../../service/auth';
-import { Router, RouterModule } from '@angular/router';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { PedidoService } from '../../../service/pedido.service'; 
+import { AuthService } from '../../../service/auth'; // <--- Inyectamos tu AuthService
 
 @Component({
   selector: 'app-checkout',
-  imports: [CommonModule, FormsModule, RouterModule],
+  standalone: true, 
+  imports: [CommonModule, FormsModule, RouterModule], 
   templateUrl: './checkout.html',
-  styleUrl: './checkout.css',
+  styleUrls: ['./checkout.css']
 })
-export class Checkout {
-  carrito: any = { items: [], total: 0 };
-  loading = true;
-  procesando = false;
+export class Checkout implements OnInit {
   
-  // Datos del cliente
+  loading: boolean = false;
+  procesando: boolean = false;
+
+  // Modelo ligado a los inputs del formulario mediante [(ngModel)]
   cliente = {
     nombre: '',
     email: '',
     telefono: '',
+    codigoPostal: '',
     direccion: '',
     ciudad: '',
-    codigoPostal: '',
-    notas: ''
+    notas: '' // Ajustado en base a tu propiedad 'notas' o 'notes'
   };
-  
-  // Solo pago contra entrega (sin Stripe)
-  metodoPago: string = 'efectivo';
+
   metodosPago = [
-    { valor: 'efectivo', nombre: 'Pago contra entrega', icono: 'fas fa-money-bill' }
+    { valor: 'mercadoPago', nombre: 'Mercado Pago', icono: 'fab fa-mercadopago' },
+    { valor: 'paypal', nombre: 'PayPal (Euros)', icono: 'fab fa-paypal text-info' },
+    { valor: 'efectivo', nombre: 'Efectivo al recibir', icono: 'fas fa-money-bill' }
   ];
 
+  metodoPago: string = 'paypal';
+
+  carrito = {
+    items: [
+      { cantidad: 1, producto: { nombre: 'Producto de prueba' }, subtotal: 100 }
+    ]
+  };
+
   constructor(
-    private carritoService: CarritoService,
     private pedidoService: PedidoService,
-    private authService: AuthService,
+    private authService: AuthService, 
     private router: Router,
-    private cdr: ChangeDetectorRef
-  ) {}
- 
+    private cdr: ChangeDetectorRef // <-- Inyectado correctamente
+  ) { }
+
   ngOnInit(): void {
-    this.cargarCarrito();
     this.cargarDatosUsuario();
   }
 
-  cargarCarrito(): void {
+  // Trae los datos guardados en la BD y llena el formulario automáticamente
+  cargarDatosUsuario(): void {
     this.loading = true;
-    this.carritoService.obtenerCarrito().subscribe({
-      next: (data) => {
-        this.carrito = data;
+    this.cdr.detectChanges(); // Forzamos mostrar el spinner de carga inicial
+
+    this.authService.obtenerPerfil().subscribe({
+      next: (usuario) => {
+        if (usuario) {
+          this.cliente.nombre = usuario.nombre || '';
+          this.cliente.email = usuario.email || '';
+          this.cliente.telefono = usuario.telefono || '';
+          this.cliente.direccion = usuario.direccion || '';
+          this.cliente.ciudad = usuario.ciudad || '';
+          this.cliente.codigoPostal = usuario.codigoPostal || '';
+        }
         this.loading = false;
-        this.cdr.detectChanges();
+        this.cdr.detectChanges(); // Forzamos a renderizar los datos inyectados en los inputs
       },
-      error: (error) => {
-        console.error('Error al cargar carrito:', error);
+      error: (err) => {
+        console.error('No se pudieron precargar los datos del usuario:', err);
         this.loading = false;
-        this.cdr.detectChanges();
+        this.cdr.detectChanges(); // Desactivamos el spinner aunque falle la carga asíncrona
       }
     });
   }
 
-  cargarDatosUsuario(): void {
-    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
-    this.cliente.nombre = usuario.nombre || '';
-    this.cliente.email = usuario.email || '';
-  }
-
   calcularTotal(): number {
-    return this.carrito.items?.reduce((sum: number, item: any) => sum + (item.subtotal || 0), 0) || 0;
+    return this.carrito.items.reduce((acc, item) => acc + item.subtotal, 0);
   }
 
   calcularEnvio(): number {
-    const total = this.calcularTotal();
-    if (total === 0) return 0;
-    return total > 100 ? 0 : 10;
+    return this.calcularTotal() > 50 ? 0 : 4.99;
   }
 
   calcularTotalConEnvio(): number {
     return this.calcularTotal() + this.calcularEnvio();
   }
 
-  validarFormulario(): boolean {
-    if (!this.cliente.nombre) {
-      alert('Ingresa tu nombre completo');
-      return false;
-    }
-    if (!this.cliente.email) {
-      alert('Ingresa tu email');
-      return false;
-    }
-    if (!this.cliente.telefono) {
-      alert('Ingresa tu teléfono');
-      return false;
-    }
-    if (!this.cliente.direccion) {
-      alert('Ingresa tu dirección de envío');
-      return false;
-    }
-    if (!this.cliente.ciudad) {
-      alert('Ingresa tu ciudad');
-      return false;
-    }
-    return true;
-  }
-
   procesarPago(): void {
-    if (!this.validarFormulario()) {
+    console.log('1. Click en procesarPago() detectado.');
+    console.log('Datos actuales del cliente en el formulario:', this.cliente);
+
+    if (!this.cliente.nombre || !this.cliente.email || !this.cliente.telefono || !this.cliente.ciudad) {
+      console.log('❌ Detenido en validación. Faltan campos obligatorios.');
+      alert('Por favor, rellena todos los campos obligatorios (*): Nombre, Email, Teléfono y Ciudad.');
       return;
     }
 
     this.procesando = true;
+    this.cdr.detectChanges(); 
+    console.log('2. Validación aprobada. Marcado como procesando = true');
 
-    const pedido = {
-      direccionEnvio: `${this.cliente.direccion}, ${this.cliente.ciudad}, CP: ${this.cliente.codigoPostal}`,
-      metodoPago: this.metodoPago,
-      telefonoContacto: this.cliente.telefono,
-      notas: this.cliente.notas,
-      total: this.calcularTotalConEnvio()
+    const calleEnvio = this.cliente.direccion ? this.cliente.direccion : 'Dirección no especificada';
+    const cpEnvio = this.cliente.codigoPostal ? `(CP: ${this.cliente.codigoPostal})` : '';
+
+    const pedidoDTO = {
+      direccionEnvio: `${calleEnvio}, ${this.cliente.ciudad} ${cpEnvio}`,
+      metodoPago: this.metodoPago.toUpperCase()
     };
 
-    this.pedidoService.crearPedido(pedido).subscribe({
-      next: (response) => {
-        console.log('Pedido creado:', response);
-        this.finalizarCompra(response);
+    console.log('3. DTO construido listo para enviar:', pedidoDTO);
+
+    this.pedidoService.crearPedido(pedidoDTO).subscribe({
+      next: (resPedido: any) => {
+        console.log('4. ¡Éxito! Pedido creado en BD. Respuesta completa del servidor:', resPedido);
+        
+        if (this.metodoPago === 'paypal') {
+          console.log('5. El método elegido es PayPal. Iniciando pasarela para el ID:', resPedido.pedidoId);
+          
+          this.pedidoService.iniciarPagoPaypal(resPedido.pedidoId).subscribe({
+            next: (urlRedireccion: string) => {
+              console.log('6. Recibida URL de redirección desde el backend (Raw):', urlRedireccion);
+              
+              let urlFinal = '';
+
+              // Si la respuesta empieza con '{', es el JSON devuelto por Spring
+              if (urlRedireccion && urlRedireccion.trim().startsWith('{')) {
+                try {
+                  const objetoJson = JSON.parse(urlRedireccion);
+                  
+                  // CORRECCIÓN EXITOSA: Usamos el campo exacto de tu backend
+                  urlFinal = objetoJson.redirectUrl || objetoJson.url || urlRedireccion;
+                  
+                  console.log('-> URL extraída con éxito del JSON:', urlFinal);
+                } catch (e) {
+                  console.error('Error al parsear el texto como JSON:', e);
+                  urlFinal = urlRedireccion;
+                }
+              } else {
+                urlFinal = urlRedireccion;
+              }
+              
+              console.log('7. Intentando redirigir navegador hacia:', urlFinal);
+              
+              // Verificación e inicio de la pasarela
+              if (urlFinal && urlFinal.trim().startsWith('http')) {
+                window.location.href = urlFinal.trim();
+              } else {
+                console.error('❌ Error: La URL final procesada no es válida:', urlFinal);
+                alert('Hubo un error con el formato del enlace de pago devuelto por el servidor.');
+                this.procesando = false;
+                this.cdr.detectChanges();
+              }
+            },
+            error: (errPaypal) => {
+              this.procesando = false;
+              this.cdr.detectChanges();
+              console.error('❌ Error en el paso 5 (iniciarPagoPaypal):', errPaypal);
+              alert('Error al inicializar la pasarela de PayPal. Revisa la consola del backend.');
+            }
+          });
+        } else if (this.metodoPago === 'mercadoPago') {
+          this.procesando = false;
+          this.cdr.detectChanges(); 
+          alert('Módulo de Mercado Pago en desarrollo.');
+        } else {
+          console.log('5b. Otro método de pago. Redirigiendo a mis-pedidos...');
+          this.procesando = false;
+          this.cdr.detectChanges(); 
+          this.router.navigate(['/mis-pedidos']);
+        }
       },
-      error: (error) => {
-        console.error('Error al crear pedido:', error);
-        alert('Error al procesar el pedido: ' + (error.error?.error || 'Intenta nuevamente'));
+      error: (errPedido) => {
         this.procesando = false;
+        this.cdr.detectChanges(); 
+        console.error('❌ Error en el paso 3 (crearPedido):', errPedido);
+        alert('Hubo un error al registrar tu pedido en el sistema. Mira la consola de Spring Boot.');
       }
     });
-  }
-
-  finalizarCompra(response: any): void {
-    this.procesando = false;
-    alert('¡Pedido realizado con éxito!');
-    
-    // Limpiar carrito local
-    this.carrito = { items: [], total: 0 };
-    
-    // Redirigir a mis pedidos
-    this.router.navigate(['/mis-pedidos']);
   }
 }

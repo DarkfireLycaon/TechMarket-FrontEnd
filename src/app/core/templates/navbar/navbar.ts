@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
@@ -26,7 +26,8 @@ export class NavbarComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private carritoService: CarritoService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -35,6 +36,7 @@ export class NavbarComponent implements OnInit {
     
     this.carritoService.carritoActualizado$.subscribe(() => {
       this.actualizarCarrito();
+      this.cdr.detectChanges();
     });
   }
 
@@ -56,6 +58,7 @@ export class NavbarComponent implements OnInit {
     this.carritoService.obtenerCarrito().subscribe({
       next: (carrito) => {
         this.carritoItems = carrito.items?.length || 0;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.carritoItems = 0;

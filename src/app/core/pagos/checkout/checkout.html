@@ -3,7 +3,6 @@
     <i class="fas fa-credit-card me-2"></i>Finalizar Compra
   </h1>
 
-  <!-- Loading -->
   <div *ngIf="loading" class="text-center py-5">
     <div class="spinner-border text-primary" role="status">
       <span class="visually-hidden">Cargando...</span>
@@ -12,7 +11,6 @@
 
   <div *ngIf="!loading" class="row">
     
-    <!-- Formulario de datos -->
     <div class="col-lg-7">
       <div class="card bg-dark border-secondary mb-4">
         <div class="card-header bg-secondary bg-opacity-25 border-secondary">
@@ -38,12 +36,12 @@
                      [(ngModel)]="cliente.telefono">
             </div>
             <div class="col-md-6 mb-3">
-              <label class="form-label text-light">Código Postal</label>
+              <label class="form-label text-light">Código Postal <span class="text-muted small">(Opcional)</span></label>
               <input type="text" class="form-control bg-dark text-light border-secondary" 
                      [(ngModel)]="cliente.codigoPostal">
             </div>
             <div class="col-12 mb-3">
-              <label class="form-label text-light">Dirección *</label>
+              <label class="form-label text-light">Dirección <span class="text-muted small">(Opcional)</span></label>
               <input type="text" class="form-control bg-dark text-light border-secondary" 
                      [(ngModel)]="cliente.direccion" placeholder="Calle y número">
             </div>
@@ -62,7 +60,6 @@
         </div>
       </div>
 
-      <!-- Método de pago -->
       <div class="card bg-dark border-secondary">
         <div class="card-header bg-secondary bg-opacity-25 border-secondary">
           <h5 class="mb-0 text-light">
@@ -93,7 +90,6 @@
       </div>
     </div>
 
-    <!-- Resumen del pedido -->
     <div class="col-lg-5">
       <div class="card bg-dark border-secondary">
         <div class="card-header bg-secondary bg-opacity-25 border-secondary">

@@ -22,13 +22,23 @@ export class Registro implements OnInit {
   constructor(
     private fb: FormBuilder, 
     private authService: AuthService, 
-    private router: Router
+    private router: Router,
+    
   ) {}
 
   ngOnInit(): void {
     this.registroForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
+      
+      // NUEVOS CAMPOS OBLIGATORIOS (Tienen Validators.required)
+      telefono: ['', [Validators.required]],
+      ciudad: ['', [Validators.required]],
+      
+      // NUEVOS CAMPOS OPCIONALES (No llevan Validators.required)
+      direccion: [''],
+      codigoPostal: [''],
+      
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
@@ -42,7 +52,8 @@ export class Registro implements OnInit {
       return;
     }
 
-    // Enviamos los datos del formulario (this.registroForm.value)
+    // Al hacer click en Registrarse, "this.registroForm.value" recolectará automáticamente 
+    // todo el JSON incluyendo nombre, email, telefono, ciudad, direccion, codigoPostal y password.
     this.authService.registrar(this.registroForm.value).subscribe({
       next: (res) => {
         Swal.fire({

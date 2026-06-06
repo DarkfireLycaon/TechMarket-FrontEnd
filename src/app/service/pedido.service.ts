@@ -23,9 +23,17 @@ export class PedidoService {
     return this.http.post(`${this.apiUrl}/crear`, pedido, { headers: this.getHeaders() });
   }
 
-  obtenerMisPedidos(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/mis-pedidos`, { headers: this.getHeaders() });
-  }
+// En tu servicio de pedidos, asegúrate de tener algo parecido a esto:
+obtenerMisPedidos(): Observable<any> {
+  const token = localStorage.getItem('token'); // O donde guardes tu token
+  
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}` // ¡Esto es lo que hace que Spring te reconozca!
+  });
+
+ return this.http.get(`${this.apiUrl}/mis-pedidos`, { headers: this.getHeaders() });
+}
 
   obtenerPedido(pedidoId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/${pedidoId}`, { headers: this.getHeaders() });
@@ -33,5 +41,16 @@ export class PedidoService {
 
   cancelarPedido(pedidoId: number): Observable<any> {
     return this.http.put(`${this.apiUrl}/cancelar/${pedidoId}`, {}, { headers: this.getHeaders() });
+  }
+
+iniciarPagoPaypal(pedidoId: number): Observable<string> { // <-- Cambiamos el tipo a Observable<string>
+    return this.http.post(`${this.apiUrl}/${pedidoId}/pagar-paypal`, null, { 
+      headers: this.getHeaders(),
+      responseType: 'text' // <-- CORRECTO: Angular sabe perfectamente que recibirá texto plano sin romper nada
+    });
+  }
+
+  capturarPagoPaypal(token: string, pedidoId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/capturar-paypal`, { token, pedidoId }, { headers: this.getHeaders() });
   }
 }

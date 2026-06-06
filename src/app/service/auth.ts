@@ -65,5 +65,25 @@ registrar(usuario: any): Observable<any> {
   const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
   return usuario.rol === 'ADMIN' || usuario.rol === 'ROLE_ADMIN';
 }
-
+// En tu auth.ts (o AuthService)
+obtenerPerfil(): Observable<any> {
+  const token = localStorage.getItem('token');
+  const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+  
+  // Apunta al endpoint de tu backend que devuelva el usuario logueado
+  return this.http.get(`${this.apiUrl}/perfil`, { headers });
+}
+// En tu AuthService (auth.ts)
+actualizarPerfil(datosUsuario: any): Observable<any> {
+  const token = localStorage.getItem('token');
+  const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  });
+  
+  // Enviamos los datos mediante PUT al endpoint de perfil
+  return this.http.put(`${this.apiUrl}/perfil`, datosUsuario, { headers });
+}
 }
