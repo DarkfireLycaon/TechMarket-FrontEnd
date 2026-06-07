@@ -27,6 +27,7 @@ import { Checkout } from './core/pagos/checkout/checkout';
 import { PagoExito } from './core/pagos/pago-exito/pago-exito'; 
 import { Perfil } from './perfil/perfil';
 import { MisPedidos } from './perfil/mis-pedidos/mis-pedidos';
+import { DetalleProducto } from './core/producto/detalle-producto/detalle-producto';
 
 export const routes: Routes = [
     // --- RUTAS PÚBLICAS ---
@@ -58,9 +59,11 @@ export const routes: Routes = [
             { path: 'servicios-techmarket', component: ServiciosTechmarket },
             { path: 'checkout', component: Checkout },
             { path: 'mis-pedidos', component: MisPedidos},
+            { path: 'producto/:id', component: DetalleProducto },
             // 2. NUEVA RUTA: Protegida para recibir al usuario tras el pago de PayPal
             { path: 'pago-exito', component: PagoExito },
             { path: 'perfil', component: Perfil },
+            { path: 'detalle/:id', component: DetalleProducto },
             // Redirección por defecto si el usuario está logueado pero entra a la raíz
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]

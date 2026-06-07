@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { PedidoService } from '../../../service/pedido.service'; 
 import { AuthService } from '../../../service/auth'; // <--- Inyectamos tu AuthService
+import { CarritoService } from '../../../service/carrito.service';
+import { Carrito } from '../../carrito/carrito';
 
 @Component({
   selector: 'app-checkout',
@@ -16,7 +18,7 @@ export class Checkout implements OnInit {
   
   loading: boolean = false;
   procesando: boolean = false;
-
+  carrito: any = { items: [] };
   // Modelo ligado a los inputs del formulario mediante [(ngModel)]
   cliente = {
     nombre: '',
@@ -35,23 +37,45 @@ export class Checkout implements OnInit {
   ];
 
   metodoPago: string = 'paypal';
+ 
 
-  carrito = {
-    items: [
-      { cantidad: 1, producto: { nombre: 'Producto de prueba' }, subtotal: 100 }
-    ]
-  };
 
   constructor(
     private pedidoService: PedidoService,
     private authService: AuthService, 
+    private carritoService: CarritoService,
     private router: Router,
     private cdr: ChangeDetectorRef // <-- Inyectado correctamente
   ) { }
 
-  ngOnInit(): void {
-    this.cargarDatosUsuario();
-  }
+// En tu clase Checkout, agrega una variable para el total
+totalCarrito: number = 0;
+
+// Y ajusta la carga:
+ngOnInit(): void {
+  this.cargarDatosUsuario();
+  
+  // 1. Cargamos el carrito de forma asíncrona
+  this.carritoService.obtenerCarrito().subscribe({
+    next: (data: any) => {
+      this.carrito = data;
+      this.totalCarrito = data.total || 0; // Guardamos el total que viene del backend
+      console.log("🛒 Carrito cargado correctamente:", this.carrito);
+      this.cdr.detectChanges(); // IMPORTANTE: Avisar a Angular que ya tenemos los datos
+    },
+    error: (err) => {
+      console.error("Error al cargar el carrito en el checkout:", err);
+    }
+  });
+}
+
+// Ahora, simplifica tus funciones de cálculo:
+calcularTotal(): number {
+  // Retornamos el total capturado o el cálculo del reduce si el total viene 0
+  return this.totalCarrito > 0 
+    ? this.totalCarrito 
+    : (this.carrito.items?.reduce((acc: number, item: any) => acc + item.subtotal, 0) || 0);
+}
 
   // Trae los datos guardados en la BD y llena el formulario automáticamente
   cargarDatosUsuario(): void {
@@ -79,9 +103,7 @@ export class Checkout implements OnInit {
     });
   }
 
-  calcularTotal(): number {
-    return this.carrito.items.reduce((acc, item) => acc + item.subtotal, 0);
-  }
+
 
   calcularEnvio(): number {
     return this.calcularTotal() > 50 ? 0 : 4.99;
@@ -108,10 +130,11 @@ export class Checkout implements OnInit {
     const calleEnvio = this.cliente.direccion ? this.cliente.direccion : 'Dirección no especificada';
     const cpEnvio = this.cliente.codigoPostal ? `(CP: ${this.cliente.codigoPostal})` : '';
 
-    const pedidoDTO = {
-      direccionEnvio: `${calleEnvio}, ${this.cliente.ciudad} ${cpEnvio}`,
-      metodoPago: this.metodoPago.toUpperCase()
-    };
+   const pedidoDTO = {
+  direccionEnvio: `${calleEnvio}, ${this.cliente.ciudad} ${cpEnvio}`,
+  metodoPago: this.metodoPago.toUpperCase(),
+  items: this.carrito.items // <--- Asegúrate de incluir los productos
+};
 
     console.log('3. DTO construido listo para enviar:', pedidoDTO);
 

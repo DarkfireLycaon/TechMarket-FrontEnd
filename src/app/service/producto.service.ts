@@ -80,4 +80,10 @@ export class ProductoService {
    buscarProductos(termino: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/productos/buscar?q=${termino}`);
   }
+  getOfertas(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/ofertas`);
+  }
+  obtenerPorId(id: number): Observable<any> {
+  return this.http.get<any>(`http://localhost:8080/api/productos/${id}`);
+}
 }

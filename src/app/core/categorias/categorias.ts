@@ -97,6 +97,7 @@ export class Categorias implements OnInit {
         }
         
         this.mostrarNotificacion(mensaje, 'error');
+         this.cdr.detectChanges();
       }
     });
   }
@@ -109,11 +110,13 @@ export class Categorias implements OnInit {
         text: mensaje,
         icon: tipo,
         timer: 2000,
-        showConfirmButton: false
+        showConfirmButton: false,
+        
       });
     } else {
       // Fallback con alert
       alert(mensaje);
+       this.cdr.detectChanges();
     }
     
     // Opcional: también mostrar en consola
