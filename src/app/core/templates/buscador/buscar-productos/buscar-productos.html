@@ -1,1 +1,89 @@
-<p>buscar-productos works!</p>
+<div class="container py-4">
+  
+  <div class="row mb-4 justify-content-center">
+    <div class="col-md-8">
+      <div class="input-group input-group-lg shadow-sm">
+        <span class="input-group-text border-end-0 text-muted">
+          <i class="fas fa-search"></i>
+        </span>
+        <input 
+          type="text" 
+          [formControl]="buscadorControl"
+          class="form-control border-start-0 ps-0" 
+          placeholder="Escribe para buscar productos en tiempo real..."
+          autofocus>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-12 text-center text-md-start">
+      <p class="text-muted">
+        @if (buscadorControl.value) {
+          Resultados para: <strong class="text-primary">"{{ buscadorControl.value }}"</strong>
+          <span class="badge bg-secondary ms-2">{{ productos.length }} encontrados</span>
+        } @else {
+          Empieza a escribir en el cuadro de arriba para filtrar el catálogo.
+        }
+      </p>
+    </div>
+  </div>
+
+  <div class="row">
+    @for (producto of productos; track $index) {
+      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
+        <div class="card h-100 shadow-sm">
+          
+          <div class="card-img-top bg-dark text-center d-flex align-items-center justify-content-center" 
+               [routerLink]="['/producto', producto.idProducto || producto.id]" 
+               style="cursor: pointer; height: 200px; overflow: hidden;">
+            
+            @if (producto.imagenUrl || producto.imagen) {
+              <img [src]="producto.imagenUrl || producto.imagen" 
+                   [alt]="producto.nombre"
+                   class="img-fluid h-100 w-100"
+                   style="object-fit: cover;">
+            } @else {
+              <i class="fas fa-box" style="font-size: 3.5rem; color: #0d6efd;"></i>
+            }
+          </div>
+
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title text-truncate" 
+                [routerLink]="['/producto', producto.idProducto || producto.id]" 
+                style="cursor: pointer;"
+                [title]="producto.nombre">
+              {{ producto.nombre }}
+            </h5>
+            <p class="card-text text-muted small mb-1">{{ producto.marca || 'Marca Genérica' }}</p>
+            <p class="card-text text-muted flex-grow-1 small">
+              {{ producto.descripcion ? (producto.descripcion | slice:0:60) + '...' : 'Sin descripción.' }}
+            </p>
+            
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <h4 class="text-primary mb-0 fw-bold">
+                {{ (producto.precioVenta || producto.precio || 0) | currency:'EUR' }}
+              </h4>
+              <span class="badge" [ngClass]="producto.stock > 0 ? 'bg-success' : 'bg-danger'">
+                Stock: {{ producto.stock }}
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    } @empty {
+      <div class="col-12 text-center py-5">
+        @if (buscadorControl.value) {
+          <i class="fas fa-search-minus fa-4x text-muted mb-3"></i>
+          <h3 class="fw-light">No hay coincidencias</h3>
+          <p class="text-muted">Prueba a escribir el nombre con otras palabras o revisa la ortografía.</p>
+        } @else {
+          <i class="fas fa-keyboard fa-4x text-muted mb-3"></i>
+          <h3 class="fw-light">Buscador listo</h3>
+          <p class="text-muted">Escribe el nombre, marca o características del artículo que deseas encontrar.</p>
+        }
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,115 @@
+<div class="gestion-container">
+  <div class="header-seccion">
+    <h2>{{ esAdmin ? '📦 Panel de Control: Pedidos Globales' : '🛍️ Mi Historial de Pedidos' }}</h2>
+    <p>{{ esAdmin ? 'Gestión, seguimiento y actualización de estados de venta.' : 'Consulta el estado y los detalles de tus compras.' }}</p>
+  </div>
+
+  @if (cargando) {
+    <div class="spinner-container">
+      <div class="spinner"></div>
+      <p>Consultando base de datos...</p>
+    </div>
+  } @else {
+    <div class="tabla-responsiva">
+      <table class="tabla-pedidos">
+        <thead>
+          <tr>
+            <th>ID Pedido</th>
+            @if (esAdmin) { <th>Cliente</th> }
+            <th>Nº Seguimiento</th>
+            <th>Fecha</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (pedido of pedidos; track $index) {
+            <tr>
+              <td><strong>#{{ pedido.id || pedido.pedidoId || pedido.idPedido }}</strong></td>
+              
+              @if (esAdmin) { 
+                <td>{{ pedido.clienteEmail || pedido.usuarioEmail || pedido.email || pedido.emailUsuario || 'Usuario General' }}</td> 
+              }
+              
+              <td><span class="tracking-code">{{ pedido.numeroSeguimiento || pedido.tracking || 'N/A' }}</span></td>
+              
+              <td>{{ (pedido.fechaPedido || pedido.fecha) | date:'dd/MM/yyyy HH:mm' }}</td>
+              
+              <td>{{ (pedido.total || pedido.totalPedido || pedido.monto || 0) | currency:'EUR' }}</td>
+              
+              <td>
+                <span class="badge" [ngClass]="pedido.estado?.toLowerCase() || 'pendiente'">
+                  {{ pedido.estado }}
+                </span>
+              </td>
+              <td>
+                <div class="botones-accion">
+                  <button class="btn btn-info" (click)="verDetalles(pedido.id || pedido.pedidoId || pedido.idPedido)">👁️ Ver</button>
+                  
+                  @if (esAdmin) {
+                    <select 
+                      [ngModel]="pedido.estado" 
+                      (ngModelChange)="cambiarEstado(pedido.id || pedido.pedidoId || pedido.idPedido, $event)"
+                      class="select-estado">
+                      <option value="PENDIENTE">Pendiente</option>
+                      <option value="PAGADO">Pagado</option>
+                      <option value="PROCESANDO">Procesando</option>
+                      <option value="ENVIADO">Enviado</option>
+                      <option value="ENTREGADO">Entregado</option>
+                      <option value="CANCELADO">Cancelado</option>
+                    </select>
+                  }
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td [attr.colspan]="esAdmin ? 7 : 6" class="tabla-vacia">
+                No hay pedidos registrados en este momento.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (pedidoSeleccionado) {
+    <div class="modal-backdrop" (click)="cerrarDetalles()">
+      <div class="modal-contenido" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Pedido #{{ pedidoSeleccionado.id || pedidoSeleccionado.pedidoId || pedidoSeleccionado.idPedido }}</h3>
+          <button class="btn-cerrar" (click)="cerrarDetalles()">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="info-grupo">
+            <p><strong>Código de Rastreo:</strong> {{ pedidoSeleccionado.numeroSeguimiento || pedidoSeleccionado.tracking || 'N/A' }}</p>
+            <p><strong>Fecha de Orden:</strong> {{ (pedidoSeleccionado.fechaPedido || pedidoSeleccionado.fecha) | date:'medium' }}</p>
+            <p><strong>Método de Pago:</strong> {{ pedidoSeleccionado.metodoPago || 'No especificado' }}</p>
+            <p><strong>Estado:</strong> <span class="badge" [ngClass]="pedidoSeleccionado.estado?.toLowerCase()">{{ pedidoSeleccionado.estado }}</span></p>
+          </div>
+
+          <h4>📦 Productos Incluidos</h4>
+          <ul class="lista-items">
+            @for (item of pedidoSeleccionado.items; track (item.id || $index)) {
+              <li>
+                <div class="item-info">
+                  <span>{{ item.productoNombre || item.nombreProducto || 'Producto' }}</span>
+                  <small class="text-muted">Cantidad: {{ item.cantidad }} x {{ (item.precioUnitario || item.precio) | currency:'EUR' }}</small>
+                </div>
+                <strong>{{ ((item.precioUnitario || item.precio || 0) * item.cantidad) | currency:'EUR' }}</strong>
+              </li>
+            }
+          </ul>
+
+          <div class="modal-total">
+            <span>Total Cobrado:</span>
+            <strong>{{ (pedidoSeleccionado.total || pedidoSeleccionado.totalPedido || pedidoSeleccionado.monto || 0) | currency:'EUR' }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

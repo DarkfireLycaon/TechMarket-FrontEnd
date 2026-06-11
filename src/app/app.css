@@ -187,3 +187,6 @@ body {
   max-height: calc(100vh - 100px);
   overflow-y: auto;
 }
+@import 'swiper/css';
+@import 'swiper/css/navigation';
+@import 'swiper/css/pagination';

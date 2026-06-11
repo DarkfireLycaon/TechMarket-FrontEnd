@@ -1,0 +1,10 @@
+/* Estilo para resaltar en qué sección del panel está el admin */
+.btn-outline-light.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-weight: bold;
+}
+
+.tracking-wider {
+  letter-spacing: 0.05em;
+}

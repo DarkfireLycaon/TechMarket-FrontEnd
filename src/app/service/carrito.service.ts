@@ -34,23 +34,25 @@ export class CarritoService {
     );
   }
 
-  // Agregar producto al carrito
+ // Agregar producto al carrito
   agregarProducto(productoId: number, cantidad: number): Observable<any> {
     const headers = this.getHeaders();
     const body = { productoId, cantidad };
     
-    console.log('Agregando producto:', body);
-    
     return this.http.post(`${this.apiUrl}/agregar`, body, { headers }).pipe(
+      // 🔥 AVISAMOS A TODOS LOS SUSCRIPTORES QUE EL CARRITO CAMBIÓ
+      tap(() => this.carritoActualizadoSource.next()), 
       tap(response => console.log('Respuesta del servidor:', response)),
       catchError(this.handleError)
     );
   }
 
-  // Eliminar producto del carrito
+ // Eliminar producto del carrito
   eliminarProducto(productoId: number): Observable<any> {
     const headers = this.getHeaders();
     return this.http.delete(`${this.apiUrl}/eliminar/${productoId}`, { headers }).pipe(
+      // 🔥 AVISAMOS TAMBIÉN AQUÍ
+      tap(() => this.carritoActualizadoSource.next()),
       tap(response => console.log('Producto eliminado:', response)),
       catchError(this.handleError)
     );
@@ -65,10 +67,12 @@ export class CarritoService {
     );
   }
 
-  // Vaciar carrito
+// Vaciar carrito
   vaciarCarrito(): Observable<any> {
     const headers = this.getHeaders();
     return this.http.delete(`${this.apiUrl}/vaciar`, { headers }).pipe(
+      // 🔥 AVISAMOS TAMBIÉN AQUÍ
+      tap(() => this.carritoActualizadoSource.next()),
       tap(response => console.log('Carrito vaciado:', response)),
       catchError(this.handleError)
     );

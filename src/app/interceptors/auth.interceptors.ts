@@ -6,7 +6,6 @@ import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { AuthService } from '../service/auth';
 
-
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
@@ -16,33 +15,38 @@ export class AuthInterceptor implements HttpInterceptor {
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Obtener el token
+    // 1. Definir qué rutas son públicas y no deben llevar el token
+    // Esto evita enviar tokens expirados o innecesarios a endpoints abiertos
+    const esRutaPublica = req.url.includes('/api/public/') || 
+                           req.url.includes('/api/productos/');
+
+    // Si es ruta pública, pasamos la petición tal cual sin tocarla
+    if (esRutaPublica) {
+        return next.handle(req);
+    }
+
+    // 2. Si no es pública, procedemos a añadir el token
     const token = this.authService.getToken();
     
-    console.log('🔄 Interceptor - URL:', req.url);
-    console.log('🔄 Token presente:', !!token);
+    console.log('🔄 Interceptor - URL Protegida:', req.url);
     
-    // Si hay token, clonar la petición y añadir el header
+    let authReq = req;
     if (token) {
-      const authReq = req.clone({
+      authReq = req.clone({
         headers: req.headers.set('Authorization', `Bearer ${token}`)
       });
       console.log('✅ Token añadido a:', req.url);
-      
-      return next.handle(authReq).pipe(
-        catchError((error: HttpErrorResponse) => {
-          if (error.status === 401 || error.status === 403) {
-            console.warn('⚠️ Sesión expirada o no autorizada');
-            this.authService.logout();
-            this.router.navigate(['/login']);
-          }
-          return throwError(() => error);
-        })
-      );
     }
-    
-    // Si no hay token, enviar la petición sin modificar
-    console.log('⚠️ Sin token, petición sin autorización');
-    return next.handle(req);
+      
+    return next.handle(authReq).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401 || error.status === 403) {
+          console.warn('⚠️ Sesión expirada o no autorizada');
+          this.authService.logout();
+          this.router.navigate(['/login']);
+        }
+        return throwError(() => error);
+      })
+    );
   }
 }

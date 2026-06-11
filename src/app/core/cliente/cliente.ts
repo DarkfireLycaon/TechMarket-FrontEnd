@@ -14,4 +14,6 @@ apellido: String;
 telefono: number;
 email: String;
 ventas: Venta[];
+isAdmin: boolean;         // <-- NUEVO ATRIBUTO: true para administradores, false para clientes
+  token?: string;
 }

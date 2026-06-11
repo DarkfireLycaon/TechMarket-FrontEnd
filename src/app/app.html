@@ -1,7 +1,13 @@
 <div class="app-container">
   <!-- Navbar superior -->
   <app-navbar></app-navbar>
-  
+ 
+
+@if (authService.isAdmin()) {
+  <app-admin-navbar></app-admin-navbar>
+}
+
+<router-outlet></router-outlet>
   <!-- Layout con sidebar -->
   <div class="main-layout container-fluid">
     <div class="row">

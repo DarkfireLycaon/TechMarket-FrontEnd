@@ -8,9 +8,19 @@ import { Component } from '@angular/core';
 })
 export class Producto {
 idProducto: number;
-descripcion: string;
-precioCompra: number;
-precioVenta: number;
-stock: number;
+  nombre: string;
+  descripcion: string;
+  precioCompra: number;
+  precioVenta: number;
+  stock: number;
+  imagenUrl: string;
+  categoria: string;
+  marca: string;
+  disponible: boolean;
+  esOferta: boolean;
+  precioOferta: number;
+  calificacion: number;
+  totalVendidos: number;
+  destacado: boolean;
 
 }

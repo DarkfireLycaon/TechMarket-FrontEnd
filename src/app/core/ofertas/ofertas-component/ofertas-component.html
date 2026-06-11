@@ -1,0 +1,28 @@
+<div class="ofertas-wrapper">
+  <h2 class="titulo-ofertas">Nuestras Mejores Ofertas</h2>
+
+  <div class="grid-ofertas">
+    @for (p of productosOferta; track p.idProducto) {
+      <div class="card-producto">
+       <img [src]="p.imagenUrl" 
+             appSafeImage="placeholder.jpg" 
+             [alt]="p.nombre"
+             loading="lazy">
+        <h3>{{ p.nombre }}</h3>
+        
+        <div class="precios">
+          @if (p.precioOferta && p.precioOferta > 0) {
+            <p class="precio-original">{{ p.precioVenta | currency }}</p>
+            <p class="precio-oferta">{{ p.precioOferta | currency }}</p>
+          } @else {
+            <p class="precio-normal">{{ p.precioVenta | currency }}</p>
+          }
+        </div>
+        
+        <button class="btn-carrito">Añadir al carrito</button>
+      </div>
+    } @empty {
+      <p class="mensaje-vacio">No hay ofertas disponibles en este momento.</p>
+    }
+  </div>
+</div>

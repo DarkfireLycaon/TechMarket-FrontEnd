@@ -19,21 +19,15 @@ export class PedidoService {
     });
   }
 
+  // ========== MÉTODOS DE CLIENTE ==========
+
   crearPedido(pedido: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/crear`, pedido, { headers: this.getHeaders() });
   }
 
-// En tu servicio de pedidos, asegúrate de tener algo parecido a esto:
-obtenerMisPedidos(): Observable<any> {
-  const token = localStorage.getItem('token'); // O donde guardes tu token
-  
-  const headers = new HttpHeaders({
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}` // ¡Esto es lo que hace que Spring te reconozca!
-  });
-
- return this.http.get(`${this.apiUrl}/mis-pedidos`, { headers: this.getHeaders() });
-}
+  obtenerMisPedidos(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/mis-pedidos`, { headers: this.getHeaders() });
+  }
 
   obtenerPedido(pedidoId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/${pedidoId}`, { headers: this.getHeaders() });
@@ -43,14 +37,39 @@ obtenerMisPedidos(): Observable<any> {
     return this.http.put(`${this.apiUrl}/cancelar/${pedidoId}`, {}, { headers: this.getHeaders() });
   }
 
-iniciarPagoPaypal(pedidoId: number): Observable<string> { // <-- Cambiamos el tipo a Observable<string>
+  // ========== MÉTODOS DE ADMINISTRADOR (NUEVOS) ==========
+
+  obtenerTodosPedidosAdmin(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/admin/todos`, { headers: this.getHeaders() });
+  }
+
+  actualizarEstadoAdmin(pedidoId: number, estado: string): Observable<any> {
+    // Enviamos el objeto { estado } porque tu controlador espera un Map<String, String>
+    return this.http.put<any>(
+      `${this.apiUrl}/admin/estado/${pedidoId}`, 
+      { estado }, 
+      { headers: this.getHeaders() }
+    );
+  }
+
+  obtenerPedidosPorEstadoAdmin(estado: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/admin/estado/${estado}`, { headers: this.getHeaders() });
+  }
+
+  // ========== PASARELA PAYPAL ==========
+
+  iniciarPagoPaypal(pedidoId: number): Observable<string> {
     return this.http.post(`${this.apiUrl}/${pedidoId}/pagar-paypal`, null, { 
       headers: this.getHeaders(),
-      responseType: 'text' // <-- CORRECTO: Angular sabe perfectamente que recibirá texto plano sin romper nada
+      responseType: 'text' 
     });
   }
 
   capturarPagoPaypal(token: string, pedidoId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/capturar-paypal`, { token, pedidoId }, { headers: this.getHeaders() });
   }
+  // ======== ADMIN =============================//
+  obtenerResumenDashboard(): Observable<any> {
+  return this.http.get('http://localhost:8080/api/admin/dashboard/resumen');
+}
 }

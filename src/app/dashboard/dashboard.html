@@ -1,4 +1,16 @@
 <div class="container py-4">
+  <section class="hero-section mb-5 position-relative text-white">
+  <div class="banner-overlay p-5 rounded-4 d-flex align-items-center" 
+       style="background: linear-gradient(135deg, #dc3545, #6610f2); min-height: 300px;">
+    <div>
+      <h1 class="display-3 fw-bold">Tecnología de Vanguardia</h1>
+      <p class="lead">Las mejores ofertas en portátiles y gaming de todo el mercado.</p>
+      <button class="btn btn-light btn-lg mt-3 fw-bold" (click)="irAOfertas()">
+        Ver todas las ofertas
+      </button>
+    </div>
+  </div>
+</section>
   <section class="mb-5">
     <h2 class="mb-4 text-center">Tus productos visitados recientemente</h2>
     <div class="row row-cols-1 row-cols-md-3 g-4">
@@ -6,7 +18,11 @@
         @for (prod of ultimos; track $index) {
           <div class="col">
             <div class="card h-100 shadow-sm border-0 transition-card">
-              <img [src]="prod.imagenUrl || 'assets/placeholder.jpg'" class="card-img-top" style="height: 200px; object-fit: cover;">
+             <img [src]="prod.imagenUrl" 
+             appSafeImage="placeholder.jpg" 
+             [alt]="prod.nombre"
+             loading="lazy"
+             class="card-img-fixed">
               <div class="card-body">
                 <h5 class="card-title">{{ prod.nombre }}</h5>
                 <p class="text-primary fw-bold">{{ prod.precioVenta | currency:'EUR' }}</p>
@@ -21,22 +37,48 @@
     </div>
   </section>
 
-  <section>
-    <h3 class="fw-bold mb-3">Ofertas Flash 🔥</h3>
-    <div class="row row-cols-1 row-cols-md-4 g-4">
-      @if (ofertas$ | async; as ofertas) {
-        @for (prod of ofertas; track $index) {
-          <div class="col">
-            <div class="card h-100 border-0 shadow-sm" (click)="verDetalle(prod)" style="cursor: pointer;">
-              <img [src]="prod.imagenUrl" class="card-img-top p-3">
-              <div class="card-body">
-                <h5 class="card-title">{{ prod.nombre }}</h5>
-                <p class="text-danger fw-bold">{{ prod.precioVenta | currency:'EUR' }}</p>
-              </div>
+ <section class="mb-5">
+  <h3 class="fw-bold mb-3">Ofertas Flash 🔥</h3>
+  
+  @if (ofertas$ | async; as ofertas) {
+    <swiper-container 
+      slides-per-view="4" 
+      space-between="20" 
+      navigation="true" 
+      pagination="true"
+      breakpoints='{"320": {"slidesPerView": 1}, "768": {"slidesPerView": 2}, "1024": {"slidesPerView": 4}}'>
+      
+      @for (prod of ofertas; track $index) {
+        <swiper-slide>
+          <div class="card h-100 border-0 shadow-sm hover-lift" (click)="verDetalle(prod)" style="cursor: pointer;">
+            <img [src]="prod.imagenUrl" class="card-img-fixed card-img-top p-3" style="height: 180px; object-fit: contain;">
+            
+            <div class="card-body">
+              <h5 class="card-title text-truncate">{{ prod.nombre }}</h5>
+              
+              @if (prod.esOferta) {
+                <div class="d-flex align-items-center gap-2">
+                  <span class="text-decoration-line-through text-muted small">
+                    {{ prod.precioVenta | currency:'EUR' }}
+                  </span>
+                  <span class="badge bg-danger">OFERTA</span>
+                </div>
+                <p class="text-danger fw-bold h4 mb-0">
+                  {{ prod.precioOferta | currency:'EUR' }}
+                </p>
+              } @else {
+                <p class="text-primary fw-bold h4 mb-0">
+                  {{ prod.precioVenta | currency:'EUR' }}
+                </p>
+              }
             </div>
           </div>
-        }
+        </swiper-slide>
       }
-    </div>
-  </section>
+    </swiper-container>
+  } @else {
+    <div class="text-center py-4 text-muted">Cargando ofertas increíbles...</div>
+  }
+</section>
+
 </div>

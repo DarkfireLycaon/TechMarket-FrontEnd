@@ -4,13 +4,15 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ProductoService } from '../../service/producto.service';
 import { CarritoService } from '../../service/carrito.service';
 import Swal from 'sweetalert2';
+import { SafeImageDirective } from '../../directives/safe-image.directive';
+
 
 @Component({
   selector: 'app-categorias',
   templateUrl: './categorias.html',
   styleUrls: ['./categorias.css'],
   standalone: true,
-  imports: [CommonModule, RouterModule]
+  imports: [CommonModule, RouterModule, SafeImageDirective]
 })
 export class Categorias implements OnInit {
  productos: any[] = [];
@@ -28,7 +30,7 @@ export class Categorias implements OnInit {
     this.route.params.subscribe(params => {
       this.categoriaActual = params['categoria'];
       this.cargarProductosPorCategoria();
-
+      this.cdr.detectChanges();
     });
   }
 
@@ -141,4 +143,11 @@ export class Categorias implements OnInit {
       icono: 'fas fa-tag' 
     };
   }
+  generarUrlImagen(url: string): string {
+  if (!url) return '';
+  // Si ya es una URL completa, la dejamos así
+  if (url.startsWith('http')) return url;
+  // Si empieza con /, la concatenamos con la URL de tu API
+  return 'http://localhost:8080' + (url.startsWith('/') ? url : '/' + url);
+}
 }

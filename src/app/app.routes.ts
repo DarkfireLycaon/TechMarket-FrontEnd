@@ -16,29 +16,31 @@ import { Registro } from './core/Auth/registro/registro';
 import { authGuard } from './guards/auth-guard';
 import { OlvidePassword } from './core/Auth/olvide/olvide';
 import { sidebar } from './core/templates/sidebar/sidebar';
-import { Ofertas } from './core/ofertas/ofertas';
 import { BuscarProductos } from './core/templates/buscador/buscar-productos/buscar-productos';
 import { Categorias } from './core/categorias/categorias';
 import { Carrito } from './core/carrito/carrito';
 import { ServiciosTechmarket } from './core/servicios-techmarket/servicios-techmarket';
 import { Checkout } from './core/pagos/checkout/checkout';
-
-// 1. NUEVO IMPORT: Asegúrate de que la ruta del archivo coincide con tu estructura de carpetas
 import { PagoExito } from './core/pagos/pago-exito/pago-exito'; 
 import { Perfil } from './perfil/perfil';
 import { MisPedidos } from './perfil/mis-pedidos/mis-pedidos';
 import { DetalleProducto } from './core/producto/detalle-producto/detalle-producto';
+import { OfertasComponent } from './core/ofertas/ofertas-component/ofertas-component';
+import { adminGuard } from './guards/admin-guard';
+import { GestionProductosComponent } from './admin/gestion-productos/gestion-productos';
+import { GestionPedidos } from './admin/gestion-pedidos/gestion-pedidos';
+import { AdminDashboard } from './admin/admin-dashboard/admin-dashboard';
 
 export const routes: Routes = [
     // --- RUTAS PÚBLICAS ---
     { path: 'login', component: Login },
     { path: 'registrar', component: Registro },
-    { path: 'olvide', component: OlvidePassword},
+    { path: 'olvide', component: OlvidePassword },
 
-    // --- RUTAS PROTEGIDAS (Agrupadas) ---
+    // --- RUTAS PROTEGIDAS PARA CLIENTES COMUNES (Bajo AuthGuard) ---
     {
         path: '',
-        canActivate: [authGuard], // El portero vigila todas las de abajo
+        canActivate: [authGuard], 
         children: [
             { path: 'dashboard', component: Dashboard },
             { path: 'productos', component: ProductoLista },
@@ -52,20 +54,32 @@ export const routes: Routes = [
             { path: 'editar-cliente/:id', component: EditarCliente },
             { path: 'ventas', component: VentasLista },
             { path: 'nueva-venta', component: NuevaVenta },
-            { path: 'ofertas', component: Ofertas},
-            { path: 'categorias/:categoria', component: Categorias},
+            { path: 'categorias/:categoria', component: Categorias },
             { path: 'productos/buscar', component: BuscarProductos },
             { path: 'carrito', component: Carrito }, 
             { path: 'servicios-techmarket', component: ServiciosTechmarket },
             { path: 'checkout', component: Checkout },
-            { path: 'mis-pedidos', component: MisPedidos},
+            { path: 'mis-pedidos', component: MisPedidos },
             { path: 'producto/:id', component: DetalleProducto },
-            // 2. NUEVA RUTA: Protegida para recibir al usuario tras el pago de PayPal
+            { path: 'ofertas', component: OfertasComponent },
             { path: 'pago-exito', component: PagoExito },
             { path: 'perfil', component: Perfil },
             { path: 'detalle/:id', component: DetalleProducto },
-            // Redirección por defecto si el usuario está logueado pero entra a la raíz
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+        ]
+    },
+
+    // --- RUTAS EXCLUSIVAS DE ADMINISTRACIÓN (Bajo AdminGuard) ---
+    {
+        path: 'admin',
+        canActivate: [adminGuard], 
+        children: [
+            // Apunta a /admin/gestion-producto (coincide con tu routerLink)
+            { path: 'gestion-producto', component: GestionProductosComponent },
+            {path: 'gestion-pedidos', component: GestionPedidos},
+            {path: 'admin-dashboard', component: AdminDashboard}
+            // Aquí puedes añadir la de pedidos cuando la tengas lista:
+            // { path: 'pedidos', component: PedidosComponent }
         ]
     },
 

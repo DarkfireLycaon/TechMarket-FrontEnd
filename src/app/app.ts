@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from "./core/templates/navbar/navbar";
 import { sidebar } from "./core/templates/sidebar/sidebar";
+import { AdminNavbar } from "./core/templates/admin-navbar/admin-navbar";
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,8 @@ import { sidebar } from "./core/templates/sidebar/sidebar";
     RouterModule,
     CommonModule,
     NavbarComponent,
-    sidebar
+    sidebar,
+    AdminNavbar
 ],
   templateUrl: './app.html',
   styleUrl: './app.css'

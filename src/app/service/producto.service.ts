@@ -7,16 +7,16 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class ProductoService {
-  private apiUrl = `${environment.apiUrl}/api/public`;
+  private apiUrl = `${environment.apiUrl}/api`;
 
   constructor(private http: HttpClient) { }
 
   getProductos(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/productos`);
+    return this.http.get(`${this.apiUrl}/public/productos`)
   }
 
   getProducto(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/productos/${id}`);
+    return this.http.get(`${this.apiUrl}/public/productos/${id}`);
   }
 
  
@@ -27,7 +27,7 @@ export class ProductoService {
 
   // Obtener productos por categoría
   getProductosPorCategoria(categoria: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/productos/categoria/${categoria}`);
+    return this.http.get(`${this.apiUrl}/public/productos/categoria/${categoria}`);
   }
 
   // Agregar producto (solo admin)
@@ -78,12 +78,15 @@ export class ProductoService {
     });
   }
    buscarProductos(termino: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/productos/buscar?q=${termino}`);
+    return this.http.get<any[]>(`${this.apiUrl}/productos/search?q=${termino}`);
   }
-  getOfertas(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/ofertas`);
-  }
+  // En tu servicio Angular
+getOfertas(): Observable<any[]> {
+  // Asegúrate de incluir "/productos/ofertas"
+  return this.http.get<any[]>(`${this.apiUrl}/productos/ofertas`);
+}
   obtenerPorId(id: number): Observable<any> {
   return this.http.get<any>(`http://localhost:8080/api/productos/${id}`);
 }
+
 }

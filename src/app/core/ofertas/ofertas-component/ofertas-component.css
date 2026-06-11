@@ -1,0 +1,88 @@
+.grid-ofertas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.card-producto {
+  /* Fondo oscuro elegante */
+  background-color: #1e1e26;
+  border: 1px solid #333;
+  color: #e0e0e0;
+  border-radius: 15px;
+  padding: 15px;
+  /* Sombra más sutil para dar profundidad en fondo oscuro */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, border-color 0.3s;
+}
+
+.card-producto:hover {
+  transform: translateY(-5px);
+  border-color: #f39c12; /* Borde se ilumina al pasar el mouse */
+}
+
+.card-producto h3 {
+  color: #ffffff;
+}
+
+.card-producto img {
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
+  margin-bottom: 10px;
+  background-color: #ffffff; /* Si las imágenes tienen fondo transparente, esto ayuda */
+  border-radius: 8px;
+}
+
+.precio-original {
+  text-decoration: line-through;
+  color: #a0a0a0; /* Gris más claro para que se lea en el fondo oscuro */
+  font-size: 0.9em;
+}
+
+.precio-oferta {
+  color: #2ecc71; /* Un verde vibrante que resalta mucho sobre fondo oscuro */
+  font-weight: bold;
+  font-size: 1.4em;
+  margin: 5px 0;
+}
+
+.btn-carrito {
+  background-color: #f39c12;
+  color: #000; /* Texto negro sobre el botón naranja para mejor contraste */
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: auto;
+}
+
+.btn-carrito:hover {
+  background-color: #e67e22;
+  color: #fff;
+}
+.ofertas-wrapper {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.titulo-ofertas {
+  color: #ffffff;
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  /* Un toque de luz al texto */
+  text-shadow: 0 0 10px rgba(243, 156, 18, 0.3);
+}
+
+.mensaje-vacio {
+  color: #a0a0a0;
+  font-size: 1.2rem;
+  margin-top: 50px;
+}

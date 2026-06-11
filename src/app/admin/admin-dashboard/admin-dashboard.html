@@ -1,0 +1,53 @@
+<div class="container-fluid py-4">
+  <h2 class="mb-4">Dashboard de Administración</h2>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card p-3 shadow-sm border-primary">
+        <h6 class="text-muted">Total Ventas</h6>
+        <h3 class="text-primary">{{ totalVentas | currency:'USD':'symbol':'1.2-2' }}</h3>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card p-3 shadow-sm">
+        <h6 class="text-muted">Pedidos</h6>
+        <h3 class="text-warning">{{ pedidosPendientes }}</h3>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card p-3 shadow-sm">
+        <h6 class="text-muted">Stock Crítico</h6>
+        <h3 class="text-danger">{{ productosBajoStock }}</h3>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card p-3 shadow-sm">
+        <h6 class="text-muted">Usuarios</h6>
+        <h3 class="text-info">{{ usuariosRegistrados }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card p-3 shadow-sm border-success">
+        <h6 class="text-muted">Top Categoria</h6>
+        <h3 class="text-success">{{ categoriaTop || 'Sin datos' }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="card p-4 shadow-sm">
+    <h5>Tendencia de Ventas (Última Semana)</h5>
+    <div style="height: 300px;">
+      <canvas 
+        *ngIf="chartData.labels && chartData.labels.length > 0"
+        baseChart 
+        [data]="chartData" 
+        [options]="chartOptions" 
+        [type]="'line'">
+      </canvas>
+      
+      <div *ngIf="!chartData.labels || chartData.labels.length === 0" class="d-flex justify-content-center align-items-center h-100">
+        <p class="text-muted">Cargando gráfico...</p>
+      </div>
+    </div>
+  </div>
+</div>

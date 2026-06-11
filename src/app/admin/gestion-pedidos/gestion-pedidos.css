@@ -1,0 +1,364 @@
+/* ==========================================================================
+   CONTENEDOR PRINCIPAL Y FONDO
+   ========================================================================== */
+.gestion-container {
+  padding: 2.5rem;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  color: #1e293b; /* Texto principal oscuro de alta legibilidad */
+}
+
+.header-seccion {
+  margin-bottom: 2.5rem;
+  border-bottom: 2px solid #cbd5e1;
+  padding-bottom: 1rem;
+}
+
+.header-seccion h2 {
+  color: #f1f5f9;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+}
+
+.header-seccion p {
+  color: #64748b;
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* ==========================================================================
+   TABLA DE PEDIDOS (ALTO CONTRASTE)
+   ========================================================================== */
+.tabla-responsiva {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.tabla-pedidos {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+/* Encabezado oscuro para romper el "blanco brillante" */
+.tabla-pedidos th {
+  background-color: #1e293b;
+  color: #f8fafc;
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tabla-pedidos td {
+  padding: 1.1rem 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+  color: #334155;
+  font-size: 0.95rem;
+}
+
+/* Filas alternas para mejorar el escaneo visual */
+.tabla-pedidos tbody tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.tabla-pedidos tbody tr:hover {
+  background-color: #f1f5f9;
+  transition: background-color 0.2s ease;
+}
+
+.tracking-code {
+  font-family: 'Courier New', Courier, monospace;
+  background-color: #e2e8f0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: bold;
+  color: #475569;
+}
+
+.tabla-vacia {
+  text-align: center;
+  padding: 3rem !important;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* ==========================================================================
+   BADGES DE ESTADO (COLORIDOS Y CONTRASTADOS)
+   ========================================================================== */
+.badge {
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: inline-block;
+  text-align: center;
+  letter-spacing: 0.03em;
+}
+
+.pendiente { background-color: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+.pagado { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+.procesando { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+.enviado { background-color: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
+.entregado { background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+.cancelado { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+/* ==========================================================================
+   BOTONES Y ELEMENTOS DE FORMULARIO
+   ========================================================================== */
+.botones-accion {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.btn-info {
+  background-color: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+.btn-info:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.select-estado {
+  padding: 0.45rem 1.5rem 0.45rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #1e293b;
+  font-weight: 500;
+  font-size: 0.85rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.select-estado:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* ==========================================================================
+   MODAL LATERAL (PANEL DESLIZANTE CON TRASFONDO OSCURO)
+   ========================================================================== */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.6); /* Fondo oscuro semitransparente pesado */
+  display: flex;
+  justify-content: flex-end;
+  z-index: 1000;
+  backdrop-filter: blur(4px); /* Difumina lo que está detrás */
+}
+
+.modal-contenido {
+  background: #ffffff;
+  width: 100%;
+  max-width: 480px;
+  height: 100%;
+  padding: 2.5rem;
+  box-shadow: -10px 0 25px -5px rgba(0, 0, 0, 0.1), -4px 0 10px -5px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 1.4rem;
+}
+
+.btn-cerrar {
+  background: #f1f5f9;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  transition: all 0.2s;
+}
+
+.btn-cerrar:hover {
+  background-color: #e2e8f0;
+  color: #0f172a;
+}
+
+.info-grupo {
+  background-color: #f8fafc;
+  padding: 1.25rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 1.5rem;
+}
+
+.info-grupo p {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+.info-grupo p:first-child { margin-top: 0; }
+.info-grupo p:last-child { margin-bottom: 0; }
+
+.lista-items {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 2rem 0;
+  overflow-y: auto;
+  max-height: 40vh;
+}
+
+.lista-items li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.item-info span {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.text-muted {
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.modal-total {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 2px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-total span {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.modal-total strong {
+  font-size: 1.6rem;
+  color: #2563eb;
+}
+
+/* ==========================================================================
+   SPINNER DE CARGA
+   ========================================================================== */
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 0;
+  color: #64748b;
+}
+
+.spinner {
+  border: 4px solid #e2e8f0;
+  width: 40px;
+  height: 40px;
+  border-top: 4px solid #2563eb;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+
+}
+/* ==========================================================================
+   ANTI-BOOTSTRAP / MATERIAL: BLINDAJE CONTRA EL BLANCO EN CELDAS
+   ========================================================================== */
+
+/* Fuerza el fondo oscuro en las celdas pares */
+.tabla-pedidos tbody tr:nth-child(even) td {
+  background-color: #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+/* Fuerza el fondo azul marino en las celdas impares */
+.tabla-pedidos tbody tr:nth-child(odd) td {
+  background-color: #172554 !important;
+  color: #cbd5e1 !important;
+}
+
+/* Evita que el hover se vea blanco al pasar el mouse */
+.tabla-pedidos tbody tr:hover td {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+   CORRECCIÓN PARA EL SELECTOR Y LAS OPCIONES (DESPLEGABLE)
+   ========================================================================== */
+.select-estado {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border: 1px solid #475569 !important;
+}
+
+/* Quita el fondo blanco nativo de las opciones del desplegable */
+.select-estado option {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+/* Por si acaso el contenedor responsivo heredó un fondo claro de Bootstrap */
+.tabla-responsiva {
+  background-color: #1e293b !important;
+  border: 1px solid #334155 !important;
+}
