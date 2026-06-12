@@ -21,7 +21,9 @@ export class AuthService {
       return null;
     }
   }
-
+get currentUserSignal() {
+  return this.currentUser.asReadonly();
+}
   login(creds: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, creds).pipe(
       tap((res: any) => {

@@ -32,7 +32,7 @@ export class MisPedidos implements OnInit {
 
   this.pedidoService.obtenerMisPedidos().subscribe({
   next: (data) => {
-  console.log('Datos recibidos del servidor:', data); // <-- MIRA LA CONSOLA PARA VER QUÉ RECIBES REALMENTE
+  
 
   // Blindaje: Verificamos si data es realmente un array
   if (Array.isArray(data)) {
@@ -43,8 +43,7 @@ export class MisPedidos implements OnInit {
       return idB - idA;
     });
   } else {
-    // Si el backend envió un objeto único o error, lo tratamos como lista vacía
-    console.warn('El backend no devolvió una lista:', data);
+    
     this.pedidos = [];
   }
   

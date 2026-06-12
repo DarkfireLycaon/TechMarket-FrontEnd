@@ -1,0 +1,56 @@
+<div class="chat-container">
+  @if (abierto()) {
+    <div class="chat-window">
+      <div class="chat-header">
+        <span>Galván Chat Bot</span>
+        <button (click)="toggleChat()">✕</button>
+      </div>
+
+      <div class="mensajes" #scrollContainer>
+        @for (m of mensajes(); track $index) {
+          <div [class.bot]="m.esBot" [class.user]="!m.esBot">
+            <p>{{ m.texto }}</p>
+            
+            @if (m.productos) {
+              <div class="product-list">
+                @for (p of m.productos; track p.id) {
+                  <div class="product-item">
+                    <span>{{ p.nombre }} ({{ p.stockInfo }})</span>
+                    <button (click)="navegarADetalle(p.id)">Ver detalles</button>
+                  </div>
+                }
+              </div>
+            }
+
+            @if (m.comparativa) {
+              <div class="comparativa-box">
+                <div class="item">
+                  <strong>{{ m.comparativa.producto1 }}</strong>
+                  <p>Precio: {{ m.comparativa.precio1 | currency }}</p>
+                  <small>Stock: {{ m.comparativa.stock1 }}</small>
+                </div>
+                
+                <div class="divider">VS</div>
+                
+                <div class="item">
+                  <strong>{{ m.comparativa.producto2 }}</strong>
+                  <p>Precio: {{ m.comparativa.precio2 | currency }}</p>
+                  <small>Stock: {{ m.comparativa.stock2 }}</small>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="chat-input-area">
+        <input [formControl]="mensajeControl" (keyup.enter)="enviar()" placeholder="Escribe aquí...">
+        <button (click)="enviar()">➤</button>
+      </div>
+    </div>
+  }
+  
+  <button class="chat-btn-main" (click)="toggleChat()">
+    <span class="icon">💬</span>
+  </button>
+</div>

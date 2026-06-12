@@ -1,0 +1,81 @@
+/* Contenedor principal que mantiene el botón y la ventana flotando */
+:host {
+  display: block !important;
+  position: fixed !important;
+  bottom: 25px !important;
+  right: 25px !important;
+  z-index: 999999 !important;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* El botón flotante */
+.chat-btn-main {
+  width: 65px !important;
+  height: 65px !important;
+  border-radius: 50% !important;
+  background-color: #0084ff !important; /* Azul Facebook */
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+  cursor: pointer !important;
+  font-size: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Ventana de Chat - ESTILO FACEBOOK */
+.chat-window {
+  width: 330px !important;
+  height: 450px !important;
+  background-color: #ffffff !important; /* Fondo blanco sólido */
+  border-radius: 10px 10px 0 0 !important;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2) !important;
+  position: absolute !important;
+  bottom: 80px !important; /* Separación del botón */
+  right: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  border: 1px solid #ccc !important;
+}
+
+/* Cabecera */
+.chat-header {
+  background-color: #f0f2f5 !important; /* Gris claro de Facebook */
+  padding: 12px !important;
+  border-bottom: 1px solid #ddd !important;
+  font-weight: 600 !important;
+  color: #333 !important;
+  display: flex !important;
+  justify-content: space-between !important;
+}
+
+/* Cuerpo del chat (fondo gris suave) */
+.mensajes {
+  flex: 1 !important;
+  background-color: #e5ddd5 !important; /* Fondo clásico de chat grisáceo */
+  padding: 15px !important;
+  overflow-y: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+/* Burbujas */
+.bot {
+  background-color: #ffffff !important;
+  color: #000 !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  align-self: flex-start !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+}
+
+.user {
+  background-color: #0084ff !important;
+  color: #fff !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  align-self: flex-end !important;
+}

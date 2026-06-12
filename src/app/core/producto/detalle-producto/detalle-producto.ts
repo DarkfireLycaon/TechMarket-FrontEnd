@@ -24,21 +24,26 @@ constructor(
    
 ){}
   ngOnInit() {
-    const id = Number(this.route.snapshot.params['id']);
+  this.route.paramMap.subscribe(params => {
+    const id = Number(params.get('id'));
+    if (id) {
+      this.cargarProducto(id);
+    }
+  });
+}
+
+// Sacamos la lógica a un método aparte para poder reutilizarla
+private cargarProducto(id: number) {
+  this.productoService.obtenerProductoPorId(id).subscribe(data => {
+    this.producto = data;
+    this.cdr.detectChanges();
     
-    // 1. Cargar datos del producto
-    this.productoService.obtenerProductoPorId(id).subscribe(data => {
-      this.producto = data;
-      this.cdr.detectChanges();
-      // 2. REGISTRAR VISITA (Aquí es donde se conecta con tu backend)
-      this.historialService.registrarVisita(id).subscribe({
-        next: () => console.log('Visita registrada en el historial'),
-        error: (err) => console.error('Error al registrar visita', err)
-       
-      });
-      
+    // Registrar visita
+    this.historialService.registrarVisita(id).subscribe({
+      next: () => console.log('Visita registrada'),
+      error: (err) => console.error('Error al registrar', err)
     });
-      this.cdr.detectChanges();
+  });
   }
    private mostrarNotificacion(mensaje: string, tipo: 'success' | 'error' | 'warning' = 'success'): void {
       // Usar SweetAlert2 si está instalado, o alert simple

@@ -30,16 +30,16 @@ export class GestionProductosComponent implements OnInit {
     this.productoService.getProductos().subscribe({
       next: (data) => {
         // 1. Esto nos dirá en la consola EXACTAMENTE qué está respondiendo Spring Boot
-        console.log('--- ¡DATOS RECIBIDOS DEL BACKEND! ---', data);
+       
         
         // 2. Comprobamos si Spring Boot devolvió un objeto paginado (Pageable)
         if (data && data.content) {
-          console.log('Se detectó paginación. Extrayendo "data.content"...');
+      
           this.productos.set(data.content);
         } 
         // 3. Comprobamos si es un Array limpio tradicional
         else if (Array.isArray(data)) {
-          console.log('Se detectó un Array limpio de productos.');
+        
           this.productos.set(data);
         } 
         // 4. Caso inesperado

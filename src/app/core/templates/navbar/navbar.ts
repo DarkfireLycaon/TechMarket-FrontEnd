@@ -1,94 +1,64 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core'; // Añadimos inject
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../../service/auth';
 import { CarritoService } from '../../../service/carrito.service';
 
-
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.html',
   styleUrls: ['./navbar.css'],
-    standalone: true,
-
+  standalone: true,
   imports: [CommonModule, FormsModule, RouterModule]
 })
 export class NavbarComponent implements OnInit {
+  // Inyectamos servicios
+  authService = inject(AuthService);
+  private carritoService = inject(CarritoService);
+  private router = inject(Router);
 
-  isLoggedIn = false;
-  usuarioNombre = '';
+  // Exponemos el signal directamente
+  user = this.authService.currentUserSignal; 
+  
   searchTerm = '';
   carritoItems = 0;
   isMenuOpen = false;
-  isAdmin = false;
-
-  constructor(
-    private authService: AuthService,
-    private carritoService: CarritoService,
-    private router: Router,
-    private cdr: ChangeDetectorRef
-  ) {}
 
   ngOnInit(): void {
-    this.verificarSesion();
-    this.actualizarCarrito();
+  
     
     this.carritoService.carritoActualizado$.subscribe(() => {
       this.actualizarCarrito();
-      this.cdr.detectChanges();
     });
   }
 
-  verificarSesion(): void {
-    this.isLoggedIn = this.authService.isLoggedIn();
-    if (this.isLoggedIn) {
-      const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
-      this.usuarioNombre = usuario.nombre || 'Usuario';
-      this.isAdmin = this.authService.isAdmin();
-    }
-  }
-
   actualizarCarrito(): void {
-    if (!this.isLoggedIn) {
+    // Si no hay usuario en el signal, el carrito es 0
+    if (!this.user()) {
       this.carritoItems = 0;
       return;
     }
     
     this.carritoService.obtenerCarrito().subscribe({
-      next: (carrito) => {
-        this.carritoItems = carrito.items?.length || 0;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.carritoItems = 0;
-      }
+      next: (carrito) => this.carritoItems = carrito.items?.length || 0,
+      error: () => this.carritoItems = 0
     });
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 
   buscarProductos(): void {
     if (this.searchTerm.trim()) {
-      this.router.navigate(['/productos/buscar'], { 
-        queryParams: { q: this.searchTerm }
-      });
+      this.router.navigate(['/productos/buscar'], { queryParams: { q: this.searchTerm } });
       this.searchTerm = '';
       this.isMenuOpen = false;
     }
   }
 
-  irAlCarrito(): void {
-    this.router.navigate(['/carrito']);
-  }
-
-  logout(): void {
-    this.authService.logout();
-    this.isLoggedIn = false;
-    this.isAdmin = false;
-    this.carritoItems = 0;
-    this.router.navigate(['/login']);
-  }
-
-  toggleMenu(): void {
-    this.isMenuOpen = !this.isMenuOpen;
-  }
+  toggleMenu(): void { this.isMenuOpen = !this.isMenuOpen; }
+  irAlCarrito(): void { this.router.navigate(['/carrito']); }
 }

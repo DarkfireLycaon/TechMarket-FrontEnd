@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { NavbarComponent } from "./core/templates/navbar/navbar";
 import { sidebar } from "./core/templates/sidebar/sidebar";
 import { AdminNavbar } from "./core/templates/admin-navbar/admin-navbar";
+import { ChatWidgetComponent } from './chatbot/chat-widget/chat-widget';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +18,8 @@ import { AdminNavbar } from "./core/templates/admin-navbar/admin-navbar";
     CommonModule,
     NavbarComponent,
     sidebar,
-    AdminNavbar
+    AdminNavbar,
+    ChatWidgetComponent
 ],
   templateUrl: './app.html',
   styleUrl: './app.css'
