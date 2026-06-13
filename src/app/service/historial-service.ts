@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class HistorialService {
-  private apiUrl = '${environment.apiUrl}/historial';
+  private apiUrl = `${environment.apiUrl}/historial`;
   private http = inject(HttpClient);
 
   // Registrar visita (llámalo desde el componente de detalle de producto)
