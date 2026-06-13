@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:8080'  // ← Cambia a localhost
+  apiUrl: 'https://techmarket-backend-6iqj.onrender.com'  // ← Cambia a localhost
 };
