@@ -5,10 +5,20 @@
     "packageManager": "npm",
     "analytics": false
   },
+  "scripts": {
+  "build": "ng build --configuration production",
+  "overrides": {
+  "ng2-charts": {
+    "@angular/cdk": "^21.0.0"
+  }
+}
+},
   "newProjectRoot": "projects",
   "projects": {
     "inventario-app": {
       "projectType": "application",
+      "schematics": {},
+      "root": "",
       "sourceRoot": "src",
       "prefix": "app",
       "architect": {
@@ -17,27 +27,44 @@
           "options": {
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": [
-              { "glob": "**/*", "input": "public" },
-              { "glob": "**/*", "input": "src/assets" }
-            ],
+         "assets": [
+  {
+    "glob": "**/*",
+    "input": "public"
+  },
+  {
+    "glob": "**/*",
+    "input": "src/assets"
+  }
+],
             "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "node_modules/bootstrap-icons/font/bootstrap-icons.css",
-              "src/styles.css"
+               "node_modules/bootstrap/dist/css/bootstrap.min.css",
+  "node_modules/bootstrap-icons/font/bootstrap-icons.css",
+  "src/styles.css"
+
             ]
           },
           "configurations": {
             "production": {
-              "fileReplacements": [
+      
+              "budgets": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "5MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "5mb"
                 }
               ],
               "outputHashing": "all"
             },
             "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -45,7 +72,23 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "inventario-app:build:production"
+            },
+            "development": {
+              "buildTarget": "inventario-app:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test"
         }
       }
     }
