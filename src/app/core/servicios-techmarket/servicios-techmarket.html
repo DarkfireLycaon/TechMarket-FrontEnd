@@ -1,5 +1,11 @@
-<p>Servicios works!</p>
-<div class="container py-5">
-  <h1 class="text-light">Nuestros servicios</h1>
-  <p class="text-secondary">Aquí se mostrarán nuestros servicios</p>
-</div>
+<section class="services-section">
+  <h2>Nuestros Servicios</h2>
+  <div class="services-grid">
+    <div class="service-card" *ngFor="let service of servicios">
+
+<i class="fas {{ service.icon }}"></i>
+      <h3>{{ service.title }}</h3>
+      <p>{{ service.description }}</p>
+    </div>
+  </div>
+</section>
