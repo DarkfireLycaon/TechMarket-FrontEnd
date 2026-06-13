@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class HistorialService {
-  private apiUrl = 'http://localhost:8080/api/historial';
+  private apiUrl = '${environment.apiUrl}/historial';
   private http = inject(HttpClient);
 
   // Registrar visita (llámalo desde el componente de detalle de producto)

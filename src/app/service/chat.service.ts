@@ -12,7 +12,7 @@ export interface Producto {
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
-  private apiUrl = 'http://localhost:8080/api/chatbot'; // Asegúrate de que esta URL sea la correcta
+  private apiUrl = '${environment.apiUrl}/chatbot'; // Asegúrate de que esta URL sea la correcta
 
   constructor(private http: HttpClient) {}
 
