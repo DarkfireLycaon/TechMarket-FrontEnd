@@ -5,7 +5,7 @@ import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class HistorialService {
-  private apiUrl = `${environment.apiUrl}/historial`;
+ private apiUrl = `${environment.apiUrl}/api/historial`;
   private http = inject(HttpClient);
 
   // Registrar visita (llámalo desde el componente de detalle de producto)
