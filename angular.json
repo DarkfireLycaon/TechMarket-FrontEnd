@@ -6,7 +6,12 @@
     "analytics": false
   },
   "scripts": {
-  "build": "ng build --configuration production"
+  "build": "ng build --configuration production",
+  "overrides": {
+  "ng2-charts": {
+    "@angular/cdk": "^21.0.0"
+  }
+}
 },
   "newProjectRoot": "projects",
   "projects": {
