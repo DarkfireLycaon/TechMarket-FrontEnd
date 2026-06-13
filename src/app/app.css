@@ -1,4 +1,7 @@
 /* Variables globales para Dark Mode */
+@import 'swiper/css';
+@import 'swiper/css/navigation';
+@import 'swiper/css/pagination';
 :root {
   --bg-primary: #0a0a0a;
   --bg-secondary: #1a1a1a;
@@ -187,6 +190,3 @@ body {
   max-height: calc(100vh - 100px);
   overflow-y: auto;
 }
-@import 'swiper/css';
-@import 'swiper/css/navigation';
-@import 'swiper/css/pagination';

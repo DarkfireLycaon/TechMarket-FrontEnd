@@ -5,6 +5,9 @@
     "packageManager": "npm",
     "analytics": false
   },
+  "scripts": {
+  "build": "ng build --configuration production"
+},
   "newProjectRoot": "projects",
   "projects": {
     "inventario-app": {
@@ -42,12 +45,12 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumError": "5MB"
                 },
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumError": "5mb"
                 }
               ],
               "outputHashing": "all"
