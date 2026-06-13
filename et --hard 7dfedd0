@@ -1,0 +1,21 @@
+[33m3fa6c22[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m algo
+[33m0531246[m carpetas que no se usan eliminadas
+[33m7dfedd0[m cambio de login
+[33mf704ffc[m sadsad
+[33ma345728[m ss
+[33m9b7e0b1[m Update environment.ts
+[33m90eaf54[m Update environment.development.ts
+[33m787814c[m s
+[33m32e0041[m cambio de url
+[33mb2fd7c1[m algo2
+[33m5ed59db[m Forzar uso de ng2-charts v9 y eliminar conflicto de versiones
+[33mddce182[m algo
+[33mee7c273[m Eliminar y regenerar lockfile para despliegue
+[33m1020769[m ss
+[33m2a4c8c6[m bot linkeado con gemini
+[33maeb3be6[m chatbot agregado y optimizacion
+[33meb61291[m Panel Administradorl
+[33me04c453[m desarrollo de deshboard y logica de visitas
+[33ma541a23[m Refactor: Uso de DTOs en pedidos y corrección de serialización JSON
+[33m57b0cb9[m feat: Implementar checkout, carrito, pedidos y mejorar UI
+[33ma8aa6f0[m Primer commit: Frontend TechMarket funcionando

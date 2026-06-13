@@ -44,8 +44,6 @@ export const routes: Routes = [
         children: [
             { path: 'dashboard', component: Dashboard },
             { path: 'productos', component: ProductoLista },
-            { path: 'agregar-producto', component: AgregarProducto },
-            { path: 'editar-producto/:id', component: EditarProducto },
             { path: 'proveedores', component: ProveedorLista },
             { path: 'agregar-proveedor', component: AgregarProveedor },
             { path: 'editar-proveedor/:id', component: EditarProveedor },
