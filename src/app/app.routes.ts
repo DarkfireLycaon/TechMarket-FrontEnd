@@ -30,6 +30,7 @@ import { adminGuard } from './guards/admin-guard';
 import { GestionProductosComponent } from './admin/gestion-productos/gestion-productos';
 import { GestionPedidos } from './admin/gestion-pedidos/gestion-pedidos';
 import { AdminDashboard } from './admin/admin-dashboard/admin-dashboard';
+import { Error404 } from './features/error404/error404';
 
 export const routes: Routes = [
     // --- RUTAS PÚBLICAS ---
@@ -82,5 +83,5 @@ export const routes: Routes = [
     },
 
     // --- COMODÍN ---
-    { path: '**', redirectTo: 'login' }
+   { path: '**', component: Error404 }
 ];

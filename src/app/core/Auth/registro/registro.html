@@ -60,7 +60,9 @@
         <button type="submit" [disabled]="registroForm.invalid" class="btn btn-success w-100 fw-bold py-2">
           Registrarse
         </button>
-
+<div class="alert alert-info">
+  <small>Nota: El correo de confirmación podría tardar unos minutos o aparecer en tu carpeta de <b>SPAM</b>. Por favor, revísala si no llega a tu bandeja principal.</small>
+</div>
         <div class="d-flex justify-content-between align-items-center mt-3 px-1">
           <p class="mb-0 small">
             <a routerLink="/login" class="fw-bold text-decoration-none text-success">¿Ya tienes cuenta? Inicia Sesión</a>
