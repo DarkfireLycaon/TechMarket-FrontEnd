@@ -2,3 +2,16 @@
 @import 'swiper/css';
 @import 'swiper/css/navigation';
 @import 'swiper/css/pagination';
+
+/* Login card improvements */
+.login-card {
+	width: 100%;
+	max-width: 420px;
+	border-radius: 15px;
+}
+
+@media (max-width: 576px) {
+	.login-card .card-body {
+		padding: 1.5rem !important;
+	}
+}
