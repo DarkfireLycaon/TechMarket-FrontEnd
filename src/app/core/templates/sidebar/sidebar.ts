@@ -39,38 +39,50 @@ export class sidebar implements OnInit {
       next: (productos: any[]) => {
         const counts: Record<string, number> = {};
         for (const p of productos || []) {
-          const cat = (p.categoria || '').toString().toUpperCase();
+          const cat = (p.categoria || '').toString().trim();
           if (!cat) continue;
-          counts[cat] = (counts[cat] || 0) + 1;
+          // normalizamos a mayúsculas para el lookup
+          const key = cat.toUpperCase();
+          counts[key] = (counts[key] || 0) + 1;
         }
 
-        const mapping: Record<string, any> = {
-          TELEFONIA: { nombre: 'Telefonía', icono: 'fas fa-mobile-alt', ruta: '/categorias/telefonia' },
-          INFORMATICA: { nombre: 'Informática', icono: 'fas fa-laptop', ruta: '/categorias/informatica' },
-          GAMING: { nombre: 'Videojuegos', icono: 'fas fa-gamepad', ruta: '/categorias/videojuegos' },
-          HOGAR: { nombre: 'Electrodomésticos', icono: 'fas fa-blender', ruta: '/categorias/electrodomesticos' },
-          AUDIO: { nombre: 'Audio', icono: 'fas fa-headphones', ruta: '/categorias/audio' },
-          ELECTRONICA: { nombre: 'Accesorios', icono: 'fas fa-plug', ruta: '/categorias/accesorios' }
-        };
+        // Definimos la lista oficial de categorías del sidebar con su slug y código en BD
+        const specs = [
+          { slug: 'televisiones', name: 'Televisiones', icon: 'fas fa-tv', code: 'TELEVISIONES' },
+          { slug: 'informatica', name: 'Informática', icon: 'fas fa-laptop', code: 'INFORMATICA' },
+          { slug: 'videojuegos', name: 'Videojuegos', icon: 'fas fa-gamepad', code: 'GAMING' },
+          { slug: 'telefonia', name: 'Telefonía', icon: 'fas fa-mobile-alt', code: 'TELEFONIA' },
+          { slug: 'electrodomesticos', name: 'Electrodomésticos', icon: 'fas fa-blender', code: 'HOGAR' },
+          { slug: 'audio', name: 'Audio', icon: 'fas fa-headphones', code: 'AUDIO' },
+          { slug: 'fotografia', name: 'Fotografía', icon: 'fas fa-camera', code: 'ELECTRONICA' },
+          { slug: 'smart-home', name: 'Smart Home', icon: 'fas fa-home', code: 'HOGAR' },
+          { slug: 'accesorios', name: 'Accesorios', icon: 'fas fa-plug', code: 'ELECTRONICA' },
+          { slug: 'impresion', name: 'Impresión', icon: 'fas fa-print', code: 'INFORMATICA' }
+        ];
 
-        const categorias: any[] = [];
-        // Añadir categorías conocidas con su contador
-        for (const key of Object.keys(mapping)) {
-          categorias.push({ ...mapping[key], count: counts[key] || 0 });
-          delete counts[key];
-        }
+        const categorias = specs.map(s => ({
+          nombre: s.name,
+          icono: s.icon,
+          ruta: `/categorias/${s.slug}`,
+          count: counts[s.code] || 0
+        }));
 
-        // Cualquier categoría restante la añadimos genérica
-        for (const key of Object.keys(counts)) {
-          categorias.push({ nombre: key, icono: 'fas fa-tag', ruta: `/categorias/${key.toLowerCase()}`, count: counts[key] });
+        // Opcional: añadir categorías extras detectadas en products pero no listadas
+        const extraKeys = Object.keys(counts).filter(k => !specs.some(s => s.code === k));
+        for (const k of extraKeys) {
+          const slug = k.toLowerCase().replace(/\s+/g, '-');
+          categorias.push({ nombre: k.charAt(0) + k.slice(1).toLowerCase(), icono: 'fas fa-tag', ruta: `/categorias/${slug}`, count: counts[k] });
         }
 
         this.categorias = categorias;
       },
       error: (err) => {
         console.error('No se pudo cargar productos para los contadores de categoría', err);
-        // Fallback: mantener lista vacía o una lista fija si se desea
-        this.categorias = [];
+        // Fallback: lista mínima estática para evitar interfaz vacía
+        this.categorias = [
+          { nombre: 'Informática', icono: 'fas fa-laptop', ruta: '/categorias/informatica', count: 0 },
+          { nombre: 'Telefonía', icono: 'fas fa-mobile-alt', ruta: '/categorias/telefonia', count: 0 }
+        ];
       }
     });
   }
