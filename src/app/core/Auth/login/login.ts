@@ -43,18 +43,41 @@ export class Login implements OnInit {
   // Getter para validaciones en el HTML
   get f() { return this.loginForm.controls; }
 
-  onLogin() {
+onLogin() {
     if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched(); // Marcamos errores visualmente
+      this.loginForm.markAllAsTouched(); 
       return;
     }
 
-    // Usamos directamente los valores del formulario
     const credentials = this.loginForm.value;
 
     this.authService.login(credentials).subscribe({
-      next: (res) => {
-        // El AuthService se encarga de guardar el token en localStorage
+      next: (res: any) => {
+        console.log('Respuesta del login:', res);
+
+        // Obtenemos el token (puede venir en res.token o ser el objeto entero si devuelve solo el token)
+        const token = res.token || (typeof res === 'string' ? res : null) || localStorage.getItem('token');
+        
+        if (token) {
+          localStorage.setItem('token', token);
+
+          try {
+            // Decodificamos el Payload del JWT para extraer el ID o el subject (sub)
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            console.log('Payload del token:', payload);
+
+            // Buscamos el ID en los claims comunes del token
+            const userId = payload.id || payload.userId || payload.sub || payload.usuarioId;
+
+            if (userId) {
+              localStorage.setItem('userId', userId.toString());
+            }
+          } catch (e) {
+            console.error('Error al decodificar el token JWT', e);
+          }
+        }
+
+        // Redirigimos al dashboard
         this.router.navigate(['/dashboard']); 
       },
       error: (err) => {

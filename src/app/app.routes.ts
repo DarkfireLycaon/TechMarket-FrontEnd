@@ -31,6 +31,9 @@ import { GestionProductosComponent } from './admin/gestion-productos/gestion-pro
 import { GestionPedidos } from './admin/gestion-pedidos/gestion-pedidos';
 import { AdminDashboard } from './admin/admin-dashboard/admin-dashboard';
 import { Error404 } from './features/error404/error404';
+import { wishlist } from './perfil/wishlist/wishlist';
+import { HistorialVisitas } from './perfil/historial-visitas/historial-visitas';
+
 
 export const routes: Routes = [
     // --- RUTAS PÚBLICAS ---
@@ -64,7 +67,9 @@ export const routes: Routes = [
             { path: 'pago-exito', component: PagoExito },
             { path: 'perfil', component: Perfil },
             { path: 'detalle/:id', component: DetalleProducto },
-            { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+            { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+            { path: 'wishlist', component: wishlist },
+            { path: 'historial-visitas', component: HistorialVisitas }
         ]
     },
 

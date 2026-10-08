@@ -30,94 +30,103 @@ import { Router, RouterLink } from '@angular/router';
 })
 
 export class ChatWidgetComponent {
-mensajes = signal<{ 
-  texto: string, 
-  esBot: boolean, 
-  productos?: { id: number, nombre: string, stockInfo: string }[],
-  comparativa?: any // Añadimos esto para manejar el ComparativaDTO
-}[]>([]);
+  mensajes = signal<{
+    texto: string,
+    esBot: boolean,
+    productos?: { id: number, nombre: string, stockInfo: string }[],
+    comparativa?: any
+  }[]>([]);
+
   mensajeControl = new FormControl('');
   abierto = signal(false);
-  
 
-  constructor(private renderer: Renderer2, private chatService: ChatService, private el: ElementRef, private cdr: ChangeDetectorRef, private router: Router) {}
-ngOnInit() {
-    // Mueve el componente al final del body automáticamente
+  sugerencias = [
+    '¿Hay stock de laptops?',
+    'Compara Samsung TV y LG TV',
+    'Precio de iPhone',
+    'Productos gaming',
+    '¿Qué me recomiendas para trabajo?',
+    'Mostrar ofertas del día'
+  ];
+
+  constructor(
+    private renderer: Renderer2,
+    private chatService: ChatService,
+    private el: ElementRef,
+    private cdr: ChangeDetectorRef,
+    private router: Router
+  ) {}
+
+  ngOnInit() {
     this.renderer.appendChild(document.body, this.el.nativeElement);
   }
+
+  usarSugerencia(texto: string) {
+    this.mensajeControl.setValue(texto);
+    this.enviar();
+  }
+
   enviar() {
-  // 1. Capturar el valor
-  const texto = this.mensajeControl.value;
-  if (!texto?.trim()) return; // Validar que no esté vacío
+    const texto = this.mensajeControl.value;
+    if (!texto?.trim()) return;
 
-  // 2. MOSTRAR EL MENSAJE DEL USUARIO INMEDIATAMENTE
-  this.mensajes.update(m => [...m, { 
-    texto: texto, 
-    esBot: false 
-  }]);
+    this.mensajes.update(m => [...m, {
+      texto: texto,
+      esBot: false
+    }]);
 
-  // 3. LIMPIAR EL INPUT
-  this.mensajeControl.setValue('');
+    this.mensajeControl.setValue('');
 
-  // 4. Llamar al servicio
-  this.chatService.enviarMensaje(texto).subscribe(respuesta => {
-    
+    this.chatService.enviarMensaje(texto).subscribe(respuesta => {
+      const nuevoMensaje: any = {
+        texto: 'Aquí tienes la respuesta:',
+        esBot: true
+      };
 
-    const nuevoMensaje: any = { 
-      texto: "Aquí tienes la respuesta:", 
-      esBot: true 
-    };
-
-    if (respuesta) {
-      if (respuesta.producto1) {
-        nuevoMensaje.comparativa = respuesta;
-      } else if (Array.isArray(respuesta)) {
-        nuevoMensaje.productos = respuesta;
-      } else {
-        // Por si el backend devuelve texto plano
-        nuevoMensaje.texto = respuesta;
+      if (respuesta) {
+        if (respuesta.producto1) {
+          nuevoMensaje.comparativa = respuesta;
+        } else if (Array.isArray(respuesta)) {
+          nuevoMensaje.productos = respuesta;
+        } else {
+          nuevoMensaje.texto = respuesta;
+        }
       }
-    }
 
-    // 5. AÑADIR LA RESPUESTA DEL BOT
-    this.mensajes.update(m => [...m, nuevoMensaje]);
-  });
-}
+      this.mensajes.update(m => [...m, nuevoMensaje]);
+    });
+  }
+
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
 
-ngAfterViewChecked() {
-  this.scrollToBottom();
-}
-
-private scrollToBottom(): void {
-  try {
-    this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
-  } catch(err) { }
-}
-
-
-
-toggleChat() {
-  const estaAbierto = !this.abierto();
-  this.abierto.set(estaAbierto);
-  
-  // Mensaje de bienvenida si el chat está vacío al abrirse
-  if (estaAbierto && this.mensajes().length === 0) {
-    this.mensajes.update(m => [...m, { 
-      texto: "¡Hola! 👋 ¿Tienes alguna consulta sobre nuestros productos?", 
-      esBot: true 
-    }]);
+  ngAfterViewChecked() {
+    this.scrollToBottom();
   }
-}
-navegarADetalle(id: number) {
-  
-  
-  this.abierto.set(false);
-  
-  this.router.navigate(['/producto', id]).then(success => {
-    
-  }).catch(err => {
-    console.error("Error en navegación:", err);
-  });
-}
+
+  private scrollToBottom(): void {
+    try {
+      this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
+    } catch (err) { }
+  }
+
+  toggleChat() {
+    const estaAbierto = !this.abierto();
+    this.abierto.set(estaAbierto);
+
+    if (estaAbierto && this.mensajes().length === 0) {
+      this.mensajes.update(m => [...m, {
+        texto: '¡Hola! 👋 Puedes preguntarme por stock, precios, comparaciones o recomendaciones. Prueba una de estas opciones o escribe tu consulta.',
+        esBot: true
+      }]);
+    }
+  }
+
+  navegarADetalle(id: number) {
+    this.abierto.set(false);
+
+    this.router.navigate(['/producto', id]).then(() => {
+    }).catch(err => {
+      console.error('Error en navegación:', err);
+    });
+  }
 }

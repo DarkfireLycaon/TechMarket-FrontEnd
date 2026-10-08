@@ -5,6 +5,7 @@ import { ProductoService } from '../../service/producto.service';
 import { CarritoService } from '../../service/carrito.service';
 import Swal from 'sweetalert2';
 import { SafeImageDirective } from '../../directives/safe-image.directive';
+import { environment } from '../../../environments/environment';
 
 
 @Component({
@@ -148,6 +149,6 @@ export class Categorias implements OnInit {
   // Si ya es una URL completa, la dejamos así
   if (url.startsWith('http')) return url;
   // Si empieza con /, la concatenamos con la URL de tu API
-  return 'http://localhost:8080' + (url.startsWith('/') ? url : '/' + url);
+  return `${environment.apiUrl}` + (url.startsWith('/') ? url : '/' + url);
 }
 }

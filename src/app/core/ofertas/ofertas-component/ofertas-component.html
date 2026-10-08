@@ -1,15 +1,50 @@
 <div class="ofertas-wrapper">
-  <h2 class="titulo-ofertas">Nuestras Mejores Ofertas</h2>
+  <div class="ofertas-header">
+    <div>
+      <p class="eyebrow">Destacados</p>
+      <h2 class="titulo-ofertas">Nuestras Mejores Ofertas</h2>
+    </div>
+    <div class="ofertas-meta">
+      <span>{{ productosFiltrados.length }} productos</span>
+    </div>
+  </div>
+
+  <div class="filtros-ofertas" aria-label="Filtros de ofertas">
+    @for (filtro of filtros; track filtro) {
+      <button
+        type="button"
+        class="filtro-btn"
+        [class.active]="filtroActual === filtro"
+        (click)="aplicarFiltro(filtro)"
+      >
+        {{ filtro }}
+      </button>
+    }
+  </div>
 
   <div class="grid-ofertas">
-    @for (p of productosOferta; track p.idProducto) {
-      <div class="card-producto">
-       <img [src]="p.imagenUrl" 
-             appSafeImage="placeholder.jpg" 
+    @for (p of productosFiltrados; track p.idProducto) {
+      <article class="card-producto">
+        <button
+          type="button"
+          class="btn-wishlist"
+          [class.activo]="isInWishlist(p)"
+          (click)="toggleWishlist(p)"
+          [attr.aria-label]="isInWishlist(p) ? 'Quitar de la wishlist' : 'Añadir a la wishlist'"
+          title="{{ isInWishlist(p) ? 'Quitar de la wishlist' : 'Añadir a la wishlist' }}"
+        >
+          <i [class]="isInWishlist(p) ? 'fas fa-heart' : 'far fa-heart'"></i>
+        </button>
+
+        <div class="badge-oferta">Oferta</div>
+
+        <img [src]="p.imagenUrl"
+             appSafeImage="placeholder.jpg"
              [alt]="p.nombre"
              loading="lazy">
+
         <h3>{{ p.nombre }}</h3>
-        
+
         <div class="precios">
           @if (p.precioOferta && p.precioOferta > 0) {
             <p class="precio-original">{{ p.precioVenta | currency }}</p>
@@ -18,11 +53,14 @@
             <p class="precio-normal">{{ p.precioVenta | currency }}</p>
           }
         </div>
-        
-        <button class="btn-carrito">Añadir al carrito</button>
-      </div>
+
+        <button class="btn-carrito" type="button" (click)="agregarAlCarrito(p)">Añadir al carrito</button>
+      </article>
     } @empty {
-      <p class="mensaje-vacio">No hay ofertas disponibles en este momento.</p>
+      <div class="mensaje-vacio">
+        <p>No hay productos para este filtro en este momento.</p>
+        <button type="button" class="btn-reset" (click)="aplicarFiltro('Todos')">Ver todos</button>
+      </div>
     }
   </div>
 </div>

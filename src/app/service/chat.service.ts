@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators'; // Necesario para usar .pipe(map(...))
+import { map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
-// 1. Definimos la interfaz fuera de la clase
 export interface Producto {
   id: number;
   nombre: string;
@@ -12,29 +12,45 @@ export interface Producto {
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
-  private apiUrl = '${environment.apiUrl}/chatbot'; // Asegúrate de que esta URL sea la correcta
+  private apiUrl = `${environment.apiUrl}/api/chatbot`;
 
   constructor(private http: HttpClient) {}
 
-enviarMensaje(texto: string): Observable<any> {
-  const palabrasClave = texto.toLowerCase()
-    .replace(/[¿?¡!]/g, '') 
-    .replace(/\b(tienen|stock|de|la|el|los|las|una|un|remar|remeras|productos|consulta|comparar|vs|diferencia entre)\b/g, '')
-    .trim();
+  analizarIntencion(texto: string): 'stock' | 'precio' | 'comparacion' | 'recomendacion' | 'ofertas' | 'general' {
+    const consulta = texto.toLowerCase();
 
-  return this.http.get(`${this.apiUrl}/consulta`, { 
-    params: { nombre: palabrasClave }, 
-    responseType: 'text' 
-  }).pipe(
-    map(respuesta => {
-      try {
-        // Intentamos convertir a JSON. Si es una comparativa, funcionará.
-        return JSON.parse(respuesta);
-      } catch (e) {
-        // Si falla, es un mensaje de texto normal (stock, etc.), lo devolvemos igual.
-        return respuesta;
-      }
-    })
-  );
-}
+    if (/(stock|disponible|hay|tienen|inventario|existe)/.test(consulta)) return 'stock';
+    if (/(precio|cuanto cuesta|valor|costo|precio de)/.test(consulta)) return 'precio';
+    if (/(comparar|vs|diferencia|mejor entre|compa)/.test(consulta)) return 'comparacion';
+    if (/(recomienda|recomendacion|quiero algo|para|ideal para)/.test(consulta)) return 'recomendacion';
+    if (/(oferta|ofertas|descuento|promo|rebaja)/.test(consulta)) return 'ofertas';
+    return 'general';
+  }
+
+  enviarMensaje(texto: string): Observable<any> {
+    const consulta = texto
+      .trim()
+      .replace(/[¿?¡!.,;]/g, '')
+      .replace(/\b(quiero|necesito|ayuda|podrias|puedes|dime|saber|sobre|de|la|el|los|las|un|una|por|mi|me|tengo|consulta|producto|productos|comparar|vs|diferencia entre)\b/gi, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    const pregunta = consulta || texto.trim();
+
+    return this.http.get(`${this.apiUrl}/consulta`, {
+      params: {
+        pregunta,
+        nombre: pregunta
+      },
+      responseType: 'text'
+    }).pipe(
+      map((respuesta) => {
+        try {
+          return JSON.parse(respuesta);
+        } catch (e) {
+          return respuesta;
+        }
+      })
+    );
+  }
 }

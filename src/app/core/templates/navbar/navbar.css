@@ -31,37 +31,40 @@
 
 .dropdown-menu {
   margin-top: 0.5rem;
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow);
+  background: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow: 0 18px 35px rgba(2, 6, 23, 0.45);
   border-radius: 12px;
-  padding: 0.5rem 0;
+  padding: 0.6rem 0;
   min-width: 220px;
   animation: fadeInDown 0.2s ease;
+  backdrop-filter: none;
+  opacity: 1;
 }
 
 .dropdown-item {
   cursor: pointer;
   transition: all 0.2s ease;
-  color: var(--text-secondary);
-  padding: 0.6rem 1.2rem;
-  font-size: 0.9rem;
+  color: #e2e8f0;
+  padding: 0.7rem 1.2rem;
+  font-size: 0.92rem;
+  font-weight: 500;
 }
 
 .dropdown-item:hover {
-  background-color: var(--bg-input);
-  color: var(--text-primary);
-  padding-left: 1.8rem;
+  background-color: rgba(148, 163, 184, 0.18);
+  color: #ffffff;
+  padding-left: 1.5rem;
 }
 
 .dropdown-item.text-danger:hover {
-  background-color: rgba(220, 53, 69, 0.15);
-  color: #dc3545;
+  background-color: rgba(220, 53, 69, 0.18);
+  color: #ff8d99;
 }
 
 .dropdown-divider {
-  border-top-color: var(--border-color);
-  margin: 0.3rem 0;
+  border-top-color: rgba(148, 163, 184, 0.35);
+  margin: 0.35rem 0;
 }
 
 .input-group {

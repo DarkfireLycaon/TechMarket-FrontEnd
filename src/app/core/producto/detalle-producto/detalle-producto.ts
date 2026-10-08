@@ -2,92 +2,109 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProductoService } from '../../../service/producto.service';
 import { HistorialService } from '../../../service/historial-service';
-import { CurrencyPipe } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import Swal from 'sweetalert2';
 import { CarritoService } from '../../../service/carrito.service';
+import { wishlistService } from '../../../service/wishlist-service';
+
+
 
 @Component({
   selector: 'app-detalle-producto',
-  imports: [CurrencyPipe],
+  imports: [CurrencyPipe, CommonModule],
   templateUrl: './detalle-producto.html',
   styleUrl: './detalle-producto.css',
 })
 export class DetalleProducto implements OnInit {
-  producto: any;
+  producto: any; 
+  esDeseado: boolean = false;
+
+  private deseadoService = inject(wishlistService);
   private route = inject(ActivatedRoute);
   private productoService = inject(ProductoService);
   private historialService = inject(HistorialService);
-private carritoService = inject(CarritoService);
-constructor(
-  private cdr: ChangeDetectorRef,
-  
-   
-){}
+  private carritoService = inject(CarritoService);
+
+  constructor(private cdr: ChangeDetectorRef) {}
+
   ngOnInit() {
-  this.route.paramMap.subscribe(params => {
-    const id = Number(params.get('id'));
-    if (id) {
-      this.cargarProducto(id);
-    }
+    this.route.paramMap.subscribe(params => {
+      const id = Number(params.get('id'));
+      if (id) {
+        this.cargarProducto(id);
+      }
+    });
+  }
+
+  private cargarProducto(id: number) {
+    this.productoService.obtenerProductoPorId(id).subscribe(data => {
+      this.producto = data;
+      this.cdr.detectChanges();
+
+      // Verificar si el producto está en la lista de deseos del usuario actual
+      this.verificarSiEsDeseado(id);
+
+      // Registrar visita
+      this.historialService.registrarVisita(id).subscribe({
+        next: () => console.log('Visita registrada'),
+        error: (err) => console.error('Error al registrar', err)
+      });
+    });
+  }
+
+private verificarSiEsDeseado(productId: number) {
+    this.deseadoService.getWishlist().subscribe({
+      next: (wishlist) => {
+        this.esDeseado = (wishlist ?? []).some((item: any) => {
+          const itemId = item?.idProducto ?? item?.productId ?? item?.id ?? item?.producto?.idProducto ?? item?.producto?.id;
+          return Number(itemId) === Number(productId);
+        });
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error al cargar wishlist', err)
+    });
+  }
+
+toggleDeseado() {
+  const idReal = this.producto?.idProducto ?? this.producto?.id ?? this.producto?.id_producto;
+
+  if (!idReal) {
+    console.error('¡El ID es nulo o undefined!');
+    return;
+  }
+  
+  this.deseadoService.addToWishlist(Number(idReal)).subscribe({
+    next: (res) => console.log('Añadido con éxito a la wishlist', res),
+    error: (err) => console.error('Error devuelto por el backend:', err)
   });
 }
 
-// Sacamos la lógica a un método aparte para poder reutilizarla
-private cargarProducto(id: number) {
-  this.productoService.obtenerProductoPorId(id).subscribe(data => {
-    this.producto = data;
-    this.cdr.detectChanges();
-    
-    // Registrar visita
-    this.historialService.registrarVisita(id).subscribe({
-      next: () => console.log('Visita registrada'),
-      error: (err) => console.error('Error al registrar', err)
-    });
-  });
-  }
-   private mostrarNotificacion(mensaje: string, tipo: 'success' | 'error' | 'warning' = 'success'): void {
-      // Usar SweetAlert2 si está instalado, o alert simple
-      if (typeof Swal !== 'undefined') {
-        Swal.fire({
-          title: tipo === 'success' ? '¡Éxito!' : 'Atención',
-          text: mensaje,
-          icon: tipo,
-          timer: 2000,
-          showConfirmButton: false,
-          
-        });
-      } else {
-        // Fallback con alert
-        alert(mensaje);
-         this.cdr.detectChanges();
-      }
-      
-      // Opcional: también mostrar en consola
-      console.log(`[${tipo.toUpperCase()}] ${mensaje}`);
+  private mostrarNotificacion(mensaje: string, tipo: 'success' | 'error' | 'warning' = 'success'): void {
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({
+        title: tipo === 'success' ? '¡Éxito!' : 'Atención',
+        text: mensaje,
+        icon: tipo,
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    } else {
+      alert(mensaje);
+      this.cdr.detectChanges();
     }
-agregarAlCarrito(productoId: number): void {
-    console.log('Intentando agregar producto ID:', productoId);
-    
-    // Verificar si hay token
+  }
+
+  agregarAlCarrito(productoId: number): void {
     const token = localStorage.getItem('token');
     if (!token) {
       this.mostrarNotificacion('Debes iniciar sesión primero', 'warning');
-      setTimeout(() => {
-        window.location.href = '/login';
-      }, 1500);
+      setTimeout(() => { window.location.href = '/login'; }, 1500);
       return;
     }
 
-    // 3. LLAMADA REAL AL SERVICIO
     this.carritoService.agregarProducto(productoId, 1).subscribe({
-      next: (response) => {
-        console.log('Producto agregado:', response);
-        this.mostrarNotificacion('Producto añadido al carrito', 'success');
-      },
-      error: (error) => {
-        console.error('Error al agregar:', error);
-        this.mostrarNotificacion('No se pudo agregar el producto', 'error');
-      }
+      next: () => this.mostrarNotificacion('Producto añadido al carrito', 'success'),
+      error: () => this.mostrarNotificacion('No se pudo agregar el producto', 'error')
     });
   }
 }

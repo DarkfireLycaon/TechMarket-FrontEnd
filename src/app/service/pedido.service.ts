@@ -70,6 +70,6 @@ export class PedidoService {
   }
   // ======== ADMIN =============================//
   obtenerResumenDashboard(): Observable<any> {
-  return this.http.get('http://localhost:8080/api/admin/dashboard/resumen');
+  return this.http.get(`${environment.apiUrl}/api/admin/dashboard/resumen`);
 }
 }

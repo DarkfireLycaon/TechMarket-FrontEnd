@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -23,7 +23,28 @@ export class sidebar implements OnInit {
     { nombre: 'Impresión', icono: 'fas fa-print', ruta: '/categorias/impresion', count: 37 }
   ];
 
+  menuAbierto = false;
+
   constructor() { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.menuAbierto = window.innerWidth >= 992;
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    if (window.innerWidth >= 992) {
+      this.menuAbierto = true;
+    }
+  }
+
+  toggleCategorias(): void {
+    this.menuAbierto = !this.menuAbierto;
+  }
+
+  cerrarMenuEnMovil(): void {
+    if (window.innerWidth < 992) {
+      this.menuAbierto = false;
+    }
+  }
 }

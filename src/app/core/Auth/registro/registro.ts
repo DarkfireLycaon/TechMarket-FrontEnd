@@ -54,19 +54,53 @@ export class Registro implements OnInit {
 
     // Al hacer click en Registrarse, "this.registroForm.value" recolectará automáticamente 
     // todo el JSON incluyendo nombre, email, telefono, ciudad, direccion, codigoPostal y password.
-    this.authService.registrar(this.registroForm.value).subscribe({
+    const datosRegistro = this.registroForm.value;
+
+    this.authService.registrar(datosRegistro).subscribe({
       next: (res) => {
-        Swal.fire({
-          title: '¡Registro Exitoso!',
-          text: 'Te hemos enviado un correo de confirmación. Revisa tu bandeja de entrada.',
-          icon: 'success',
-          confirmButtonColor: '#198754',
-          timer: 5000,
-          timerProgressBar: true
-        });
+        const token = res?.token;
+        const email = datosRegistro.email;
+        const password = datosRegistro.password;
+
+        if (token) {
+          localStorage.setItem('token', token);
+          this.router.navigate(['/dashboard']);
+        } else if (email && password) {
+          this.authService.login({ email, password }).subscribe({
+            next: () => {
+              Swal.fire({
+                title: '¡Registro Exitoso!',
+                text: 'Tu cuenta fue creada y ya quedaste logueado.',
+                icon: 'success',
+                confirmButtonColor: '#198754',
+                timer: 4000,
+                timerProgressBar: true
+              });
+
+              this.router.navigate(['/dashboard']);
+            },
+            error: () => {
+              Swal.fire({
+                title: '¡Registro Exitoso!',
+                text: 'La cuenta se creó correctamente. Iniciá sesión para continuar.',
+                icon: 'success',
+                confirmButtonColor: '#198754'
+              });
+            }
+          });
+        } else {
+          Swal.fire({
+            title: '¡Registro Exitoso!',
+            text: 'Te hemos enviado un correo de confirmación. Revisa tu bandeja de entrada.',
+            icon: 'success',
+            confirmButtonColor: '#198754',
+            timer: 5000,
+            timerProgressBar: true
+          });
+        }
 
         this.registroExitoso = true;
-        this.registroForm.reset(); // Limpia el formulario
+        this.registroForm.reset();
       },
       error: (err) => {
         Swal.fire({

@@ -1,29 +1,74 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class HistorialService {
- private apiUrl = `${environment.apiUrl}/api/historial`;
+  private apiUrl = `${environment.apiUrl}/api/historial`;
   private http = inject(HttpClient);
 
-  // Registrar visita (llámalo desde el componente de detalle de producto)
-  registrarVisita(productoId: number): Observable<any> {
-    const token = localStorage.getItem('token'); 
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);// Asegúrate de que esta es la clave correcta
-    return this.http.post(`${this.apiUrl}/visita/${productoId}`, {});
-  }
-
-  // Obtener los 3 últimos (para el slider)
-  getUltimosVisitados(): Observable<any[]> {
+  private getToken(): string | null {
     const token = localStorage.getItem('token');
-  const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get<any[]>(`${this.apiUrl}/ultimos`);
+    if (!token || token === 'null' || token === 'undefined') {
+      return null;
+    }
+    return token;
   }
 
-  // Obtener recomendaciones basadas en lo visitado
+  private getHeaders(): HttpHeaders {
+    const token = this.getToken();
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return token ? headers.set('Authorization', `Bearer ${token}`) : headers;
+  }
+
+  registrarVisita(productoId: number): Observable<any> {
+    const token = this.getToken();
+    if (!token) {
+      return of(null);
+    }
+
+    return this.http.post(`${this.apiUrl}/visita/${productoId}`, {}, {
+      headers: this.getHeaders()
+    });
+  }
+
+  getUltimosVisitados(limit: number = 4): Observable<any[]> {
+    const token = this.getToken();
+    if (!token) {
+      return of([]);
+    }
+
+    return this.http.get<any[]>(`${this.apiUrl}/ultimos`, {
+      headers: this.getHeaders(),
+      params: { limit: String(limit) }
+    });
+  }
+
+  getHistorialCompleto(): Observable<any[]> {
+    const token = this.getToken();
+    if (!token) {
+      return of([]);
+    }
+
+    return this.http.get<any[]>(this.apiUrl, {
+      headers: this.getHeaders()
+    });
+  }
+
   getRecomendaciones(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/recomendaciones`);
+    const token = this.getToken();
+    const userId = localStorage.getItem('userId');
+
+    if (!token || !userId) {
+      return of([]);
+    }
+
+    return this.http.get<any[]>(`${environment.apiUrl}/api/dashboard/recomendaciones/${userId}`, {
+      headers: this.getHeaders()
+    });
   }
 }

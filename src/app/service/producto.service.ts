@@ -86,7 +86,7 @@ getOfertas(): Observable<any[]> {
   return this.http.get<any[]>(`${this.apiUrl}/productos/ofertas`);
 }
   obtenerPorId(id: number): Observable<any> {
-  return this.http.get<any>(`http://localhost:8080/api/productos/${id}`);
+  return this.http.get<any>(`${environment.apiUrl}/api/productos/${id}`);
 }
 
 }

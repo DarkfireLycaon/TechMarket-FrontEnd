@@ -1,16 +1,30 @@
-<div class="sidebar-categorias">
-  <div class="sidebar-header">
-    <i class="fas fa-th-large me-2"></i>
+<div class="sidebar-categorias" [class.menu-cerrado]="!menuAbierto">
+  <button
+    class="sidebar-toggle"
+    type="button"
+    (click)="toggleCategorias()"
+    [attr.aria-expanded]="menuAbierto"
+    aria-controls="categorias-list"
+  >
+    <i class="fas fa-th-large"></i>
     <span>Categorías</span>
+    <i class="fas" [ngClass]="menuAbierto ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+  </button>
+
+  <div class="sidebar-body" id="categorias-list" [class.hidden]="!menuAbierto">
+    <div class="sidebar-header">
+      <i class="fas fa-th-large me-2"></i>
+      <span>Categorías</span>
+    </div>
+
+    <ul class="categorias-list">
+      <li *ngFor="let categoria of categorias">
+        <a [routerLink]="categoria.ruta" routerLinkActive="active" (click)="cerrarMenuEnMovil()">
+          <i [class]="categoria.icono"></i>
+          <span>{{ categoria.nombre }}</span>
+          <span class="badge">{{ categoria.count }}</span>
+        </a>
+      </li>
+    </ul>
   </div>
-  
-  <ul class="categorias-list">
-    <li *ngFor="let categoria of categorias">
-      <a [routerLink]="categoria.ruta" routerLinkActive="active">
-        <i [class]="categoria.icono"></i>
-        <span>{{ categoria.nombre }}</span>
-        <span class="badge">{{ categoria.count }}</span>
-      </a>
-    </li>
-  </ul>
 </div>

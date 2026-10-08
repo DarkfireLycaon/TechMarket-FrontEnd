@@ -1,0 +1,51 @@
+<div class="historial-wrapper">
+  <div class="historial-header">
+    <div>
+      <p class="eyebrow">Mi actividad</p>
+      <h2>Historial de visitas</h2>
+    </div>
+    <button type="button" class="btn btn-outline-light" routerLink="/dashboard">
+      Volver al inicio
+    </button>
+  </div>
+
+  @if (cargando) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-3 text-muted">Cargando tus visitas...</p>
+    </div>
+  } @else if (visitas.length > 0) {
+    <div class="historial-grid">
+      @for (visita of visitas; track $index) {
+        <article class="historial-card">
+          <img
+            [src]="visita.imagenUrl || visita.producto?.imagenUrl || 'assets/placeholder.jpg'"
+            appSafeImage="placeholder.jpg"
+            [alt]="visita.nombre || visita.producto?.nombre || 'Producto visitado'"
+            loading="lazy"
+          >
+
+          <div class="historial-body">
+            <div class="historial-top">
+              <span class="badge-fecha">{{ formatearFecha(visita.fechaVisita || visita.fecha || visita.updatedAt) }}</span>
+            </div>
+
+            <h3>{{ visita.nombre || visita.producto?.nombre || 'Producto' }}</h3>
+            <p class="precio">{{ (visita.precioVenta || visita.producto?.precioVenta || visita.precio || 0) | currency }}</p>
+
+            <button type="button" class="btn btn-primary w-100" (click)="verDetalle(visita)">
+              Ver detalle
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  } @else {
+    <div class="empty-state">
+      <i class="fas fa-history"></i>
+      <h3>Aún no has visitado productos</h3>
+      <p>Explora ofertas y productos para que aparezcan aquí.</p>
+      <button type="button" class="btn btn-primary" routerLink="/ofertas">Ir a ofertas</button>
+    </div>
+  }
+</div>
