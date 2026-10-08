@@ -193,3 +193,68 @@ Si se quiere ampliar la documentación, se recomienda agregar:
 - diagramas de flujo de login
 - diagrama de entidades del dominio
 - guía para despliegue en Render/Vercel/Heroku
+
+## Despliegue a Render y preparación del frontend
+
+- 1) Configurar la URL del backend en producción:
+
+  - Edita el archivo `src/environments/environment.prod.ts` y reemplaza `https://<tu-backend-en-render>.onrender.com` por la URL real de tu servicio en Render.
+
+- 2) Hacer la build de producción:
+
+```bash
+npm install
+npm run build
+```
+
+La build generará los archivos en la carpeta `dist/`.
+
+- 3) Desplegar en Render (opciones):
+
+  Opción A — Deploy estático (Static Site) en Render:
+
+  - Crea un nuevo "Static Site" en Render.
+  - Conecta tu repositorio de GitHub (ver sección siguiente).
+  - Indica el comando de build: `npm run build`.
+  - Public directory: `dist/` (o `dist/<nombre-del-proyecto>` si aplica).
+
+  Opción B — Deploy como servicio web (Docker/Node) si necesitas server-side:
+
+  - Crea un nuevo servicio en Render (Web Service) y configura el build y start apropiados.
+
+## Subir el frontend a GitHub
+
+1) Inicializar repositorio local (si no existe):
+
+```bash
+git init
+git add .
+git commit -m "Initial commit - frontend"
+```
+
+2) Crear repositorio en GitHub (UI) y copiar la URL remota. Luego enlazar y subir:
+
+```bash
+git remote add origin https://github.com/tu-usuario/tu-repo-frontend.git
+git branch -M main
+git push -u origin main
+```
+
+3) Si ya tienes cambios y solo quieres subirlos:
+
+```bash
+git add .
+git commit -m "Actualiza configuración para despliegue en Render"
+git push
+```
+
+4) Conectar en Render:
+
+  - En Render, al crear el servicio estático o Web Service, elige conectar con GitHub y autoriza el repositorio.
+  - Configura el branch a desplegar (por ejemplo `main`) y Render ejecutará `npm run build` y publicará la carpeta `dist/`.
+
+## Nota sobre CORS y seguridad
+
+- Asegúrate de que el backend en Render permita peticiones desde el dominio donde desplegarás el frontend (configurar CORS en Spring Boot).
+- No incluyas credenciales ni tokens en el código. Usa variables de entorno en el backend.
+
