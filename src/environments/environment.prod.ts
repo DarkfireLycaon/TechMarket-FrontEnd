@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://<tu-backend-en-render>.onrender.com'
+  apiUrl: 'https://techmarket-backend-1.onrender.com'
 };
