@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ProductoService } from '../../../service/producto.service';
@@ -11,7 +11,25 @@ import { ProductoService } from '../../../service/producto.service';
   imports: [CommonModule, RouterModule]
 })
 export class sidebar implements OnInit {
-  categorias: Array<any> = [];
+  private readonly categoriasDefinidas = [
+    { slug: 'televisiones', name: 'Televisiones', icon: 'fas fa-tv', codes: ['TELEVISIONES'] },
+    { slug: 'informatica', name: 'Informática', icon: 'fas fa-laptop', codes: ['COMPONENTES', 'ALMACENAMIENTO', 'REDES', 'MONITORES', 'PERIFERICOS'] },
+    { slug: 'videojuegos', name: 'Videojuegos', icon: 'fas fa-gamepad', codes: ['VIDEOJUEGOS', 'GAMING'] },
+    { slug: 'telefonia', name: 'Telefonía', icon: 'fas fa-mobile-alt', codes: ['TELEFONIA'] },
+    { slug: 'electrodomesticos', name: 'Electrodomésticos', icon: 'fas fa-blender', codes: ['ELECTRODOMESTICOS'] },
+    { slug: 'audio', name: 'Audio', icon: 'fas fa-headphones', codes: ['AUDIO'] },
+    { slug: 'fotografia', name: 'Fotografía', icon: 'fas fa-camera', codes: ['FOTOGRAFIA', 'CAMARAS'] },
+    { slug: 'smart-home', name: 'Smart Home', icon: 'fas fa-home', codes: ['SMART_HOME', 'SMART HOME'] },
+    { slug: 'accesorios', name: 'Accesorios', icon: 'fas fa-plug', codes: ['ACCESORIOS'] },
+    { slug: 'impresion', name: 'Impresión', icon: 'fas fa-print', codes: ['IMPRESION'] },
+    { slug: 'laptops', name: 'Laptops', icon: 'fas fa-laptop', codes: ['LAPTOPS'] }
+  ];
+  categorias = signal(this.categoriasDefinidas.map(categoria => ({
+    nombre: categoria.name,
+    icono: categoria.icon,
+    ruta: `/categorias/${categoria.slug}`,
+    count: 0
+  })));
 
   menuAbierto = false;
 
@@ -42,67 +60,21 @@ export class sidebar implements OnInit {
           const cat = (p.categoria || '').toString().trim();
           if (!cat) continue;
           // normalizamos a mayúsculas para el lookup
-          const key = cat.toUpperCase();
+          const key = cat.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
           counts[key] = (counts[key] || 0) + 1;
         }
 
-        // Definimos la lista oficial de categorías del sidebar con su slug y código en BD
-        const specs = [
-          { slug: 'televisiones', name: 'Televisiones', icon: 'fas fa-tv', code: 'TELEVISIONES' },
-          { slug: 'informatica', name: 'Informática', icon: 'fas fa-laptop', code: 'INFORMATICA' },
-          { slug: 'videojuegos', name: 'Videojuegos', icon: 'fas fa-gamepad', code: 'GAMING' },
-          { slug: 'telefonia', name: 'Telefonía', icon: 'fas fa-mobile-alt', code: 'TELEFONIA' },
-          { slug: 'electrodomesticos', name: 'Electrodomésticos', icon: 'fas fa-blender', code: 'HOGAR' },
-          { slug: 'audio', name: 'Audio', icon: 'fas fa-headphones', code: 'AUDIO' },
-          { slug: 'fotografia', name: 'Fotografía', icon: 'fas fa-camera', code: 'ELECTRONICA' },
-          { slug: 'smart-home', name: 'Smart Home', icon: 'fas fa-home', code: 'HOGAR' },
-          { slug: 'accesorios', name: 'Accesorios', icon: 'fas fa-plug', code: 'ELECTRONICA' },
-          { slug: 'impresion', name: 'Impresión', icon: 'fas fa-print', code: 'INFORMATICA' }
-        ];
-
-        const categorias = specs.map(s => ({
-          nombre: s.name,
-          icono: s.icon,
-          ruta: `/categorias/${s.slug}`,
-          count: counts[s.code] || 0
-        }));
-
-        // Opcional: añadir categorías extras detectadas en products pero no listadas
-        const extraKeys = Object.keys(counts).filter(k => !specs.some(s => s.code === k));
-        for (const k of extraKeys) {
-          const slug = k.toLowerCase().replace(/\s+/g, '-');
-          categorias.push({ nombre: k.charAt(0) + k.slice(1).toLowerCase(), icono: 'fas fa-tag', ruta: `/categorias/${slug}`, count: counts[k] });
-        }
-
-        this.categorias = categorias;
+        this.categorias.set(this.categoriasDefinidas.map(categoria => ({
+          nombre: categoria.name,
+          icono: categoria.icon,
+          ruta: `/categorias/${categoria.slug}`,
+          count: categoria.codes.reduce((total, code) => total + (counts[code] || 0), 0)
+        })));
       },
       error: (err) => {
         console.error('No se pudo cargar productos para los contadores de categoría', err);
-        // Fallback: lista mínima estática para evitar interfaz vacía
-        this.categorias = [
-          { nombre: 'Informática', icono: 'fas fa-laptop', ruta: '/categorias/informatica', count: 0 },
-          { nombre: 'Telefonía', icono: 'fas fa-mobile-alt', ruta: '/categorias/telefonia', count: 0 }
-        ];
       }
     });
-  }
-
-  // Cargar categorías dinámicamente y contadores
-  ngAfterViewInit(): void {
-    // Intentamos usar el servicio si está disponible
-    try {
-      const injector = (window as any).ng && (window as any).ng.getInjector ? (window as any).ng.getInjector(document.querySelector('app-root')) : null;
-      // Si no hay injector (app empaquetada), fallback: no hacer nada
-      if (!injector) return;
-      const productoService: ProductoService = injector.get(ProductoService);
-      // Suponemos que el backend expone /api/public/categorias o similar
-      productoService.getProductos().subscribe(() => {
-        // no-op sólo para asegurar que el servicio está inicializado
-      });
-    } catch (e) {
-      // no hacer nada si no se puede inyectar
-      console.warn('No se pudo inicializar categorías dinámicas:', e);
-    }
   }
 
   cerrarMenuEnMovil(): void {

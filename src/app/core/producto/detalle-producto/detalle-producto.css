@@ -1,0 +1,99 @@
+.product-image-wrap {
+	position: relative;
+	display: flex;
+	min-height: 360px;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	border-radius: 12px;
+	background: #f3f5f3;
+}
+
+.product-image {
+	display: block;
+	width: 100%;
+	max-height: 500px;
+	aspect-ratio: 4 / 3;
+	padding: 1.25rem;
+	object-fit: contain;
+}
+
+.product-image-placeholder {
+	display: grid;
+	width: 100%;
+	min-height: 360px;
+	place-items: center;
+	background: #f3f5f3;
+}
+
+.offer-ribbon {
+	position: absolute;
+	z-index: 1;
+	top: 1rem;
+	left: 1rem;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.5rem 0.75rem;
+	border-radius: 4px;
+	background: #b53327;
+	color: #fff;
+	font-size: 0.8rem;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+.offer-price-panel {
+	max-width: 420px;
+	padding: 1rem 1.1rem;
+	border: 1px solid #f0c5bd;
+	border-left: 4px solid #b53327;
+	border-radius: 8px;
+	background: #fff5f2;
+}
+
+.offer-price-heading,
+.offer-prices {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
+.offer-price-heading {
+	color: #76251e;
+	font-size: 0.85rem;
+	font-weight: 700;
+}
+
+.offer-discount {
+	padding: 0.25rem 0.45rem;
+	border-radius: 4px;
+	background: #76251e;
+	color: #fff;
+}
+
+.offer-prices {
+	justify-content: flex-start;
+	flex-wrap: wrap;
+	margin-top: 0.45rem;
+}
+
+.offer-original-price {
+	color: #68716c;
+	font-size: 1rem;
+	text-decoration: line-through;
+}
+
+.offer-current-price {
+	color: #a32d22;
+	font-size: 2rem;
+	line-height: 1.2;
+}
+
+@media (max-width: 767.98px) {
+	.product-image-wrap,
+	.product-image-placeholder {
+		min-height: 280px;
+	}
+}

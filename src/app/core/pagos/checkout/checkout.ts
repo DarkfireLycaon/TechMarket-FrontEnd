@@ -18,6 +18,8 @@ export class Checkout implements OnInit {
   
   loading: boolean = false;
   procesando: boolean = false;
+  esInvitado = false;
+  mostrarOpcionesAcceso = false;
   carrito: any = { items: [] };
   // Modelo ligado a los inputs del formulario mediante [(ngModel)]
   cliente = {
@@ -30,13 +32,7 @@ export class Checkout implements OnInit {
     notas: '' // Ajustado en base a tu propiedad 'notas' o 'notes'
   };
 
-  metodosPago = [
-    { valor: 'mercadoPago', nombre: 'Mercado Pago', icono: 'fab fa-mercadopago' },
-    { valor: 'paypal', nombre: 'PayPal (Euros)', icono: 'fab fa-paypal text-info' },
-    { valor: 'efectivo', nombre: 'Efectivo al recibir', icono: 'fas fa-money-bill' }
-  ];
-
-  metodoPago: string = 'paypal';
+  metodoPago = 'stripe';
  
 
 
@@ -53,7 +49,9 @@ totalCarrito: number = 0;
 
 // Y ajusta la carga:
 ngOnInit(): void {
-  this.cargarDatosUsuario();
+  this.esInvitado = !this.authService.getToken();
+  this.mostrarOpcionesAcceso = this.esInvitado;
+  if (!this.esInvitado) this.cargarDatosUsuario();
   
   // 1. Cargamos el carrito de forma asíncrona
   this.carritoService.obtenerCarrito().subscribe({
@@ -113,6 +111,20 @@ calcularTotal(): number {
     return this.calcularTotal() + this.calcularEnvio();
   }
 
+  continuarComoInvitado(): void {
+    this.esInvitado = true;
+    this.metodoPago = 'stripe';
+    this.mostrarOpcionesAcceso = false;
+  }
+
+  irARegistro(): void {
+    this.router.navigate(['/registrar'], { queryParams: { returnUrl: '/checkout' } });
+  }
+
+  irALogin(): void {
+    this.router.navigate(['/login'], { queryParams: { returnUrl: '/checkout' } });
+  }
+
   procesarPago(): void {
     console.log('1. Click en procesarPago() detectado.');
     console.log('Datos actuales del cliente en el formulario:', this.cliente);
@@ -123,18 +135,29 @@ calcularTotal(): number {
       return;
     }
 
+    if (!this.carrito.items?.length) {
+      alert('Tu carrito está vacío. Añade productos antes de continuar.');
+      this.router.navigate(['/carrito']);
+      return;
+    }
+
     this.procesando = true;
     this.cdr.detectChanges(); 
     console.log('2. Validación aprobada. Marcado como procesando = true');
 
+    if (this.esInvitado) {
+      this.procesarPagoInvitado();
+      return;
+    }
+
     const calleEnvio = this.cliente.direccion ? this.cliente.direccion : 'Dirección no especificada';
     const cpEnvio = this.cliente.codigoPostal ? `(CP: ${this.cliente.codigoPostal})` : '';
 
-   const pedidoDTO = {
-  direccionEnvio: `${calleEnvio}, ${this.cliente.ciudad} ${cpEnvio}`,
-  metodoPago: this.metodoPago.toUpperCase(),
-  items: this.carrito.items // <--- Asegúrate de incluir los productos
-};
+    const pedidoDTO = {
+      direccionEnvio: `${calleEnvio}, ${this.cliente.ciudad} ${cpEnvio}`,
+      metodoPago: 'STRIPE',
+      items: this.carrito.items
+    };
 
     console.log('3. DTO construido listo para enviar:', pedidoDTO);
 
@@ -142,61 +165,19 @@ calcularTotal(): number {
       next: (resPedido: any) => {
         console.log('4. ¡Éxito! Pedido creado en BD. Respuesta completa del servidor:', resPedido);
         
-        if (this.metodoPago === 'paypal') {
-          console.log('5. El método elegido es PayPal. Iniciando pasarela para el ID:', resPedido.pedidoId);
-          
-          this.pedidoService.iniciarPagoPaypal(resPedido.pedidoId).subscribe({
-            next: (urlRedireccion: string) => {
-              console.log('6. Recibida URL de redirección desde el backend (Raw):', urlRedireccion);
-              
-              let urlFinal = '';
-
-              // Si la respuesta empieza con '{', es el JSON devuelto por Spring
-              if (urlRedireccion && urlRedireccion.trim().startsWith('{')) {
-                try {
-                  const objetoJson = JSON.parse(urlRedireccion);
-                  
-                  // CORRECCIÓN EXITOSA: Usamos el campo exacto de tu backend
-                  urlFinal = objetoJson.redirectUrl || objetoJson.url || urlRedireccion;
-                  
-                  console.log('-> URL extraída con éxito del JSON:', urlFinal);
-                } catch (e) {
-                  console.error('Error al parsear el texto como JSON:', e);
-                  urlFinal = urlRedireccion;
-                }
-              } else {
-                urlFinal = urlRedireccion;
-              }
-              
-              console.log('7. Intentando redirigir navegador hacia:', urlFinal);
-              
-              // Verificación e inicio de la pasarela
-              if (urlFinal && urlFinal.trim().startsWith('http')) {
-                window.location.href = urlFinal.trim();
-              } else {
-                console.error('❌ Error: La URL final procesada no es válida:', urlFinal);
-                alert('Hubo un error con el formato del enlace de pago devuelto por el servidor.');
-                this.procesando = false;
-                this.cdr.detectChanges();
-              }
-            },
-            error: (errPaypal) => {
-              this.procesando = false;
-              this.cdr.detectChanges();
-              console.error('❌ Error en el paso 5 (iniciarPagoPaypal):', errPaypal);
-              alert('Error al inicializar la pasarela de PayPal. Revisa la consola del backend.');
-            }
-          });
-        } else if (this.metodoPago === 'mercadoPago') {
-          this.procesando = false;
-          this.cdr.detectChanges(); 
-          alert('Módulo de Mercado Pago en desarrollo.');
-        } else {
-          console.log('5b. Otro método de pago. Redirigiendo a mis-pedidos...');
-          this.procesando = false;
-          this.cdr.detectChanges(); 
-          this.router.navigate(['/mis-pedidos']);
+        const pedidoId = Number(resPedido.pedidoId ?? resPedido.idPedido ?? resPedido.id);
+        if (!pedidoId) {
+          this.finalizarConError('El pedido se creó, pero no recibimos un identificador válido.');
+          return;
         }
+
+        this.pedidoService.iniciarPagoStripe(pedidoId).subscribe({
+          next: (respuesta) => this.redirigirAStripe(respuesta),
+          error: (error) => {
+            console.error('Error al crear la sesión Stripe:', error);
+            this.finalizarConError(error.error?.mensaje || 'No se pudo iniciar el pago con Stripe.');
+          }
+        });
       },
       error: (errPedido) => {
         this.procesando = false;
@@ -205,5 +186,63 @@ calcularTotal(): number {
         alert('Hubo un error al registrar tu pedido en el sistema. Mira la consola de Spring Boot.');
       }
     });
+  }
+
+  private procesarPagoInvitado(): void {
+    const direccion = [this.cliente.direccion, this.cliente.ciudad, this.cliente.codigoPostal]
+      .filter(Boolean)
+      .join(', ');
+    const items = this.carrito.items.map((item: any) => ({
+      productoId: Number(item.producto?.idProducto ?? item.productoId ?? item.producto?.id),
+      cantidad: Number(item.cantidad)
+    })).filter((item: any) => item.productoId > 0 && item.cantidad > 0);
+
+    this.pedidoService.crearPedidoInvitado({
+      nombre: this.cliente.nombre.trim(),
+      email: this.cliente.email.trim(),
+      telefono: this.cliente.telefono.trim(),
+      direccionEnvio: direccion,
+      ciudad: this.cliente.ciudad.trim(),
+      codigoPostal: this.cliente.codigoPostal.trim(),
+      notas: this.cliente.notas.trim(),
+      metodoPago: 'STRIPE',
+      items
+    }).subscribe({
+      next: (respuesta: any) => {
+        this.redirigirAStripe(respuesta);
+      },
+      error: (error) => {
+        console.error('Error al crear el pedido invitado:', error);
+        this.finalizarConError(error.error?.mensaje || 'No se pudo iniciar el pago con Stripe.');
+      }
+    });
+  }
+
+  private redirigirAStripe(respuesta: any): void {
+    let resultado = respuesta;
+    if (typeof resultado === 'string' && resultado.trim().startsWith('{')) {
+      try {
+        resultado = JSON.parse(resultado);
+      } catch {
+        resultado = respuesta;
+      }
+    }
+
+    const redirectUrl = typeof resultado === 'string'
+      ? resultado.trim()
+      : (resultado?.redirectUrl ?? resultado?.url ?? '').toString().trim();
+
+    if (/^https?:\/\//.test(redirectUrl)) {
+      window.location.assign(redirectUrl);
+      return;
+    }
+
+    this.finalizarConError('El servidor no devolvió un enlace de pago Stripe válido.');
+  }
+
+  private finalizarConError(mensaje: string): void {
+    this.procesando = false;
+    this.cdr.detectChanges();
+    alert(mensaje);
   }
 }

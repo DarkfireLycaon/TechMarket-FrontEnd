@@ -88,6 +88,9 @@ export class ChatWidgetComponent {
           nuevoMensaje.comparativa = respuesta;
         } else if (Array.isArray(respuesta)) {
           nuevoMensaje.productos = respuesta;
+        } else if (typeof respuesta === 'object') {
+          nuevoMensaje.texto = respuesta.texto || nuevoMensaje.texto;
+          nuevoMensaje.productos = Array.isArray(respuesta.productos) ? respuesta.productos : undefined;
         } else {
           nuevoMensaje.texto = respuesta;
         }

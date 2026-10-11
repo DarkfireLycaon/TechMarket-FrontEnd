@@ -47,12 +47,17 @@ export class BuscarProductos implements OnInit, OnDestroy {
 
     this.productoService.buscarProductos(termino).subscribe({
       next: (data) => {
-        this.productos = data;
+        const resultados = Array.isArray(data) ? data : (data?.content ?? []);
+        this.productos = [...resultados].sort((a, b) => Number(this.esOferta(b)) - Number(this.esOferta(a)));
         // ✅ Marcamos para verificar solo cuando recibimos datos del servidor
         this.cdr.markForCheck(); 
       },
       error: (err) => console.error('Error:', err)
     });
+  }
+
+  esOferta(producto: any): boolean {
+    return Boolean(producto?.esOferta && Number(producto?.precioOferta) > 0);
   }
 
   ngOnDestroy(): void {

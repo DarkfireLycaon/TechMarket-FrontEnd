@@ -17,12 +17,44 @@
         <li class="nav-item"><a class="nav-link" routerLink="/servicios-techmarket">Servicios</a></li>
       </ul>
 
-      <div class="mx-auto w-50">
+      <div class="mx-auto w-50 search-container">
         <div class="input-group">
           <input type="text" class="form-control search-input" placeholder="Buscar..." 
-                 [(ngModel)]="searchTerm" (keyup.enter)="buscarProductos()">
-          <button class="btn btn-light" (click)="buscarProductos()"><i class="fas fa-search"></i></button>
+                 [(ngModel)]="searchTerm"
+                 (ngModelChange)="buscarMientrasEscribe($event)"
+                 (keyup.enter)="buscarProductos()"
+                 (keydown.escape)="ocultarSugerencias()"
+                 (focus)="mostrarSugerencias = searchTerm.trim().length >= 2"
+                 [attr.aria-expanded]="mostrarSugerencias"
+                 aria-controls="sugerencias-productos"
+                 autocomplete="off">
+          <button class="btn btn-light" type="button" aria-label="Buscar productos" (click)="buscarProductos()"><i class="fas fa-search"></i></button>
         </div>
+        @if (mostrarSugerencias) {
+          <div class="suggestion-panel" id="sugerencias-productos" role="listbox" aria-label="Productos coincidentes">
+            @if (cargandoSugerencias) {
+              <div class="suggestion-status" role="status">Buscando productos...</div>
+            } @else if (sugerencias.length) {
+              @for (producto of sugerencias; track producto.idProducto || producto.id) {
+                <button class="suggestion-item" type="button" role="option" (click)="seleccionarProducto(producto)">
+                  <span class="suggestion-details">
+                    <span class="suggestion-name">{{ producto.nombre }}</span>
+                    <span class="suggestion-category">{{ producto.categoria || producto.marca || 'Producto' }}</span>
+                  </span>
+                  <span class="suggestion-price">
+                    @if (esOferta(producto)) {
+                      <span class="suggestion-offer">Oferta</span>
+                    }
+                    {{ precioMostrado(producto) | currency:'EUR' }}
+                  </span>
+                </button>
+              }
+              <button class="suggestion-all" type="button" (click)="buscarProductos()">Ver todos los resultados</button>
+            } @else {
+              <div class="suggestion-status">No hay coincidencias para “{{ searchTerm }}”.</div>
+            }
+          </div>
+        }
       </div>
 
       <ul class="navbar-nav ms-auto">

@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Producto } from '../../producto/producto';
 import { ProductoService } from '../../../service/producto.service';
 import { CommonModule, CurrencyPipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { SafeImageDirective } from '../../../directives/safe-image.directive';
 import { CarritoService } from '../../../service/carrito.service';
 import { wishlistService } from '../../../service/wishlist-service';
@@ -9,7 +10,7 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-ofertas-component',
-  imports: [CommonModule, CurrencyPipe, SafeImageDirective],
+  imports: [CommonModule, CurrencyPipe, SafeImageDirective, RouterLink],
   templateUrl: './ofertas-component.html',
   styleUrl: './ofertas-component.css',
 })
@@ -18,6 +19,7 @@ export class OfertasComponent implements OnInit {
   productosFiltrados: Producto[] = [];
   wishlistIds: number[] = [];
   filtroActual = 'Todos';
+  tieneSesion = false;
 
   filtros = [
     'Todos',
@@ -38,8 +40,9 @@ export class OfertasComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.tieneSesion = Boolean(localStorage.getItem('token'));
     this.cargarOfertas();
-    this.cargarWishlist();
+    if (this.tieneSesion) this.cargarWishlist();
   }
 
   private cargarOfertas(): void {
@@ -107,16 +110,9 @@ export class OfertasComponent implements OnInit {
 
   agregarAlCarrito(producto: Producto): void {
     const productoId = this.obtenerIdProducto(producto);
-    const token = localStorage.getItem('token');
 
     if (!productoId) {
       this.mostrarNotificacion('No se pudo identificar el producto', 'error');
-      return;
-    }
-
-    if (!token) {
-      this.mostrarNotificacion('Debes iniciar sesión primero', 'warning');
-      setTimeout(() => window.location.href = '/login', 1500);
       return;
     }
 

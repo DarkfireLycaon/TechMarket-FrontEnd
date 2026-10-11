@@ -50,8 +50,11 @@
       
       @for (prod of ofertas; track $index) {
         <swiper-slide>
-          <div class="card h-100 border-0 shadow-sm hover-lift" (click)="verDetalle(prod)" style="cursor: pointer;">
-            <img [src]="prod.imagenUrl" class="card-img-fixed card-img-top p-3" style="height: 180px; object-fit: contain;">
+          <a class="card h-100 border-0 shadow-sm hover-lift text-decoration-none text-reset"
+             [href]="'/detalle/' + (prod.idProducto ?? prod.id ?? prod.id_producto)"
+             (click)="abrirDetalle($event, prod)"
+             [attr.aria-label]="'Ver detalle de ' + prod.nombre">
+            <img [src]="prod.imagenUrl" [alt]="prod.nombre" class="card-img-fixed card-img-top p-3" style="height: 180px; object-fit: contain;">
             
             <div class="card-body">
               <h5 class="card-title text-truncate">{{ prod.nombre }}</h5>
@@ -72,7 +75,7 @@
                 </p>
               }
             </div>
-          </div>
+          </a>
         </swiper-slide>
       }
     </swiper-container>
@@ -84,18 +87,15 @@
 <section class="mb-5">
   <h3 class="fw-bold mb-3">Te recomendamos para vos ✨</h3>
 
-  @switch (recomendacionesEstado) {
-    @case ('loading') {
-      <div class="text-center py-4 text-muted">Cargando recomendaciones...</div>
-    }
-    @case ('error') {
-      <div class="alert alert-warning text-center mb-0">{{ errorRecomendaciones || 'No se pudieron cargar las recomendaciones.' }}</div>
-    }
-    @case ('vacio') {
-      <div class="text-center py-4 text-muted">Todavía no tenemos recomendaciones para vos.</div>
-    }
-    @default {
-      @if (recomendados$ | async; as recomendados) {
+  @if (recomendados$ | async; as recomendados) {
+    @switch (recomendacionesEstado) {
+      @case ('error') {
+        <div class="alert alert-warning text-center mb-0">{{ errorRecomendaciones || 'No se pudieron cargar las recomendaciones.' }}</div>
+      }
+      @case ('vacio') {
+        <div class="text-center py-4 text-muted">Todavía no tenemos recomendaciones para vos.</div>
+      }
+      @default {
         @if (recomendados.length) {
           <div class="row row-cols-1 row-cols-md-4 g-4">
             @for (prod of recomendados; track prod.idProducto) {
@@ -114,10 +114,10 @@
         } @else {
           <div class="text-center py-4 text-muted">Todavía no tenemos recomendaciones para vos.</div>
         }
-      } @else {
-        <div class="text-center py-4 text-muted">Cargando recomendaciones...</div>
       }
     }
+  } @else {
+    <div class="text-center py-4 text-muted">Cargando recomendaciones...</div>
   }
 </section>
 

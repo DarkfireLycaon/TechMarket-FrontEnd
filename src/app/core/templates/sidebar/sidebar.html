@@ -18,13 +18,15 @@
     </div>
 
     <ul class="categorias-list">
-      <li *ngFor="let categoria of categorias">
+      @for (categoria of categorias(); track categoria.ruta) {
+      <li>
         <a [routerLink]="categoria.ruta" routerLinkActive="active" (click)="cerrarMenuEnMovil()">
           <i [class]="categoria.icono"></i>
           <span>{{ categoria.nombre }}</span>
           <span class="badge">{{ categoria.count }}</span>
         </a>
       </li>
+      }
     </ul>
   </div>
 </div>

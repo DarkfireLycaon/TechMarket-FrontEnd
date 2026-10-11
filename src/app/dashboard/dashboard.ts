@@ -4,7 +4,7 @@ import { ProductoService } from '../service/producto.service';
 import { HistorialService } from '../service/historial-service';
 import { Router, RouterModule } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap, timeout } from 'rxjs/operators';
 import { register } from 'swiper/element/bundle';
 import { SafeImageDirective } from '../directives/safe-image.directive';
 
@@ -40,18 +40,22 @@ export class Dashboard implements OnInit {
     this.ofertas$ = this.productoService.getOfertas();
 
     this.recomendados$ = this.historialService.getRecomendaciones().pipe(
-      tap((respuesta) => {
-        const lista = Array.isArray(respuesta)
-          ? respuesta
-          : ((respuesta as any)?.content ?? []);
+      timeout({ first: 8000 }),
+      map((respuesta) => Array.isArray(respuesta) ? respuesta : ((respuesta as any)?.content ?? [])),
+      catchError((error) => {
+        console.warn('No se pudieron cargar las recomendaciones personalizadas:', error);
+        return of([]);
+      }),
+      switchMap((lista) => lista.length ? of(lista) : this.cargarRecomendacionesGenericas()),
+      tap((lista) => {
         this.recomendacionesEstado = lista.length ? 'ok' : 'vacio';
         this.errorRecomendaciones = '';
         this.cdr.detectChanges();
       }),
       catchError((error) => {
-        console.error('Error al cargar recomendaciones:', error);
+        console.error('No se pudieron cargar productos recomendados:', error);
         this.recomendacionesEstado = 'error';
-        this.errorRecomendaciones = 'No se pudieron cargar las recomendaciones. Reintenta más tarde.';
+        this.errorRecomendaciones = 'No se pudieron cargar productos recomendados.';
         this.cdr.detectChanges();
         return of([]);
       })
@@ -61,14 +65,34 @@ export class Dashboard implements OnInit {
   }
 
   verDetalle(prod: any) {
-    const id = prod?.idProducto; 
-    if (id) {
+    const id = prod?.idProducto ?? prod?.id ?? prod?.id_producto;
+    if (id !== undefined && id !== null && id !== '') {
       this.router.navigate(['/detalle', id]);
     } else {
       console.error("No se pudo obtener el idProducto", prod);
     }
   }
+
+  abrirDetalle(event: MouseEvent, prod: any): void {
+    if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    this.verDetalle(prod);
+  }
+
   irAOfertas() {
   this.router.navigate(['/ofertas']);
+  }
+
+  private cargarRecomendacionesGenericas(): Observable<any[]> {
+    return this.productoService.getProductos().pipe(
+      timeout({ first: 8000 }),
+      map((respuesta: any) => {
+        const productos = Array.isArray(respuesta) ? respuesta : (respuesta?.content ?? []);
+        return [...productos]
+          .filter((producto) => Number(producto.stock) > 0)
+          .sort((a, b) => Number(b.destacado) - Number(a.destacado) || Number(b.totalVendidos) - Number(a.totalVendidos))
+          .slice(0, 2);
+      })
+    );
   }
 }

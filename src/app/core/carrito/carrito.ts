@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CarritoService } from '../../service/carrito.service';
-import { AuthService } from '../../service/auth';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -17,7 +16,6 @@ carrito: any = { items: [], total: 0 };
 
   constructor(
     private carritoService: CarritoService,
-    private authService: AuthService,
     private router: Router,
      private cdr: ChangeDetectorRef 
   ) {}
@@ -85,11 +83,6 @@ carrito: any = { items: [], total: 0 };
   }
 
   procederPago(): void {
-    if (!this.authService.isLoggedIn()) {
-      alert('Debes iniciar sesión para continuar');
-      this.router.navigate(['/login']);
-      return;
-    }
     this.router.navigate(['/checkout']);
   }
 

@@ -3,13 +3,27 @@
     <i class="fas fa-credit-card me-2"></i>Finalizar Compra
   </h1>
 
+  <section *ngIf="mostrarOpcionesAcceso" class="card bg-dark border-secondary mb-4">
+    <div class="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+      <div>
+        <h2 class="h5 text-light mb-1">¿Quieres crear una cuenta?</h2>
+        <p class="text-secondary mb-0">Puedes registrarte, iniciar sesión o continuar sin cuenta.</p>
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-outline-light" type="button" (click)="irARegistro()">Registrarme</button>
+        <button class="btn btn-outline-light" type="button" (click)="irALogin()">Iniciar sesión</button>
+        <button class="btn btn-primary" type="button" (click)="continuarComoInvitado()">Continuar como invitado</button>
+      </div>
+    </div>
+  </section>
+
   <div *ngIf="loading" class="text-center py-5">
     <div class="spinner-border text-primary" role="status">
       <span class="visually-hidden">Cargando...</span>
     </div>
   </div>
 
-  <div *ngIf="!loading" class="row">
+  <div *ngIf="!loading && !mostrarOpcionesAcceso" class="row">
     
     <div class="col-lg-7">
       <div class="card bg-dark border-secondary mb-4">
@@ -67,24 +81,11 @@
           </h5>
         </div>
         <div class="card-body">
-          <div *ngFor="let metodo of metodosPago" class="form-check mb-2">
-            <input class="form-check-input" type="radio" 
-                   [value]="metodo.valor" 
-                   [(ngModel)]="metodoPago"
-                   name="metodoPago"
-                   [id]="'pago_' + metodo.valor">
-            <label class="form-check-label text-light" [for]="'pago_' + metodo.valor">
-              <i [class]="metodo.icono + ' me-2'"></i>{{ metodo.nombre }}
-            </label>
+          <div *ngIf="esInvitado" class="alert alert-info mb-0">
+            <i class="fas fa-lock me-2"></i>Pago seguro con Stripe. No necesitas crear una cuenta.
           </div>
-          
-          <div class="alert alert-info mt-3 small" *ngIf="metodoPago === 'mercadoPago'">
-            <i class="fab fa-mercadopago me-2"></i>
-            Serás redirigido a Mercado Pago para completar el pago de forma segura.
-          </div>
-          <div class="alert alert-secondary mt-3 small" *ngIf="metodoPago === 'efectivo'">
-            <i class="fas fa-money-bill me-2"></i>
-            Pagas al recibir el producto. Solo aceptamos efectivo.
+          <div *ngIf="!esInvitado" class="alert alert-info mb-0">
+            <i class="fas fa-lock me-2"></i>Serás redirigido a Stripe para completar el pago de forma segura.
           </div>
         </div>
       </div>
@@ -123,7 +124,7 @@
                   (click)="procesarPago()" 
                   [disabled]="procesando">
             <span *ngIf="!procesando">
-              <i class="fas fa-check-circle me-2"></i>Confirmar pedido
+              <i class="fas fa-lock me-2"></i>{{ esInvitado ? 'Continuar al pago seguro' : 'Pagar con Stripe' }}
             </span>
             <span *ngIf="procesando">
               <span class="spinner-border spinner-border-sm me-2"></span>Procesando...

@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { ProductoService } from '../../service/producto.service';
 import { CarritoService } from '../../service/carrito.service';
 import Swal from 'sweetalert2';
@@ -38,24 +39,25 @@ export class Categorias implements OnInit {
   cargarProductosPorCategoria(): void {
     this.loading = true;
     
-    const categoriaMap: { [key: string]: string } = {
-      televisiones: 'TELEFONIA',
-      informatica: 'INFORMATICA',
-      videojuegos: 'GAMING',
-      telefonia: 'TELEFONIA',
-      electrodomesticos: 'HOGAR',
-      audio: 'AUDIO',
-      fotografia: 'ELECTRONICA',
-      'smart-home': 'HOGAR',
-      accesorios: 'ELECTRONICA',
-      impresion: 'INFORMATICA'
+    const categoriaMap: { [key: string]: string[] } = {
+      televisiones: ['Televisiones'],
+      informatica: ['Componentes', 'Almacenamiento', 'Redes', 'Monitores', 'Periféricos'],
+      videojuegos: ['Videojuegos', 'Gaming'],
+      telefonia: ['Telefonía'],
+      electrodomesticos: ['Electrodomésticos'],
+      audio: ['Audio'],
+      fotografia: ['Fotografía', 'Cámaras'],
+      'smart-home': ['Smart Home'],
+      accesorios: ['Accesorios'],
+      impresion: ['Impresión'],
+      laptops: ['Laptops']
     };
 
-    const categoriaBD = categoriaMap[this.categoriaActual] || this.categoriaActual.toUpperCase();
+    const categoriasBD = categoriaMap[this.categoriaActual] || [this.categoriaActual];
     
-    this.productoService.getProductosPorCategoria(categoriaBD).subscribe({
-      next: (data) => {
-        this.productos = data;
+    forkJoin(categoriasBD.map(categoria => this.productoService.getProductosPorCategoria(categoria))).subscribe({
+      next: (resultados) => {
+        this.productos = resultados.flat();
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -71,16 +73,6 @@ export class Categorias implements OnInit {
   // Método para agregar al carrito mejorado
   agregarAlCarrito(productoId: number): void {
     console.log('Intentando agregar producto ID:', productoId);
-    
-    // Verificar si hay token
-    const token = localStorage.getItem('token');
-    if (!token) {
-      this.mostrarNotificacion('Debes iniciar sesión primero', 'warning');
-      setTimeout(() => {
-        window.location.href = '/login';
-      }, 1500);
-      return;
-    }
     
     this.carritoService.agregarProducto(productoId, 1).subscribe({
       next: (response) => {
@@ -137,7 +129,8 @@ export class Categorias implements OnInit {
       fotografia: { nombre: 'Fotografía', icono: 'fas fa-camera' },
       'smart-home': { nombre: 'Smart Home', icono: 'fas fa-home' },
       accesorios: { nombre: 'Accesorios', icono: 'fas fa-plug' },
-      impresion: { nombre: 'Impresión', icono: 'fas fa-print' }
+      impresion: { nombre: 'Impresión', icono: 'fas fa-print' },
+      laptops: { nombre: 'Laptops', icono: 'fas fa-laptop' }
     };
     return categoriasInfo[this.categoriaActual] || { 
       nombre: this.categoriaActual, 

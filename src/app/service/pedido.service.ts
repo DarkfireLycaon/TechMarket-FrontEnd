@@ -25,6 +25,10 @@ export class PedidoService {
     return this.http.post(`${this.apiUrl}/crear`, pedido, { headers: this.getHeaders() });
   }
 
+  crearPedidoInvitado(pedido: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/crear-invitado`, pedido);
+  }
+
   obtenerMisPedidos(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/mis-pedidos`, { headers: this.getHeaders() });
   }
@@ -58,8 +62,8 @@ export class PedidoService {
 
   // ========== PASARELA PAYPAL ==========
 
-  iniciarPagoPaypal(pedidoId: number): Observable<string> {
-    return this.http.post(`${this.apiUrl}/${pedidoId}/pagar-paypal`, null, { 
+  iniciarPagoStripe(pedidoId: number): Observable<string> {
+    return this.http.post(`${this.apiUrl}/${pedidoId}/pagar-stripe`, null, {
       headers: this.getHeaders(),
       responseType: 'text' 
     });

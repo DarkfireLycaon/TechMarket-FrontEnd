@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -48,6 +49,7 @@ export class wishlistService {
   }
 
   getWishlist(): Observable<any[]> {
+    if (!localStorage.getItem('token')) return of([]);
     const headers = this.getAuthHeaders();
     return this.http.get<any[]>(this.apiUrl, { headers }).pipe(
       map((items) => Array.isArray(items) ? items.map(item => this.normalizarItem(item)) : [])

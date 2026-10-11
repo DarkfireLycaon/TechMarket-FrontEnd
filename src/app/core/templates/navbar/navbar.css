@@ -110,6 +110,106 @@
   border-radius: 8px 0 0 8px !important;
 }
 
+.search-container {
+  position: relative;
+  z-index: 1080;
+}
+
+.suggestion-panel {
+  position: absolute;
+  z-index: 1081;
+  top: calc(100% + 8px);
+  right: 0;
+  left: 0;
+  max-height: 380px;
+  overflow-y: auto;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 8px;
+  background: #101820;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.3);
+}
+
+.suggestion-item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0.9rem;
+  border: 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  background: transparent;
+  color: #f2f5f7;
+  text-align: left;
+  cursor: pointer;
+}
+
+.suggestion-item:hover,
+.suggestion-item:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+  outline: none;
+}
+
+.suggestion-details {
+  display: grid;
+  min-width: 0;
+  gap: 0.15rem;
+}
+
+.suggestion-name {
+  overflow: hidden;
+  font-size: 0.9rem;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.suggestion-category {
+  color: #aebbc5;
+  font-size: 0.75rem;
+}
+
+.suggestion-price {
+  display: flex;
+  flex-shrink: 0;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.suggestion-offer {
+  padding: 0.15rem 0.35rem;
+  border-radius: 3px;
+  background: #b53327;
+  color: #fff;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+}
+
+.suggestion-status,
+.suggestion-all {
+  width: 100%;
+  padding: 0.8rem 0.9rem;
+  border: 0;
+  background: transparent;
+  color: #c6d0d8;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.suggestion-all {
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+  color: #94d2bd;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.suggestion-all:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
 @keyframes fadeInDown {
   from {
     opacity: 0;

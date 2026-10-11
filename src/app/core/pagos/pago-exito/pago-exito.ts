@@ -10,8 +10,8 @@ import { PedidoService } from '../../../service/pedido.service';
   template: `
     <div style="text-align: center; margin-top: 50px;">
       <h2>{{ mensaje }}</h2>
-      <p *ngIf="cargando">Procesando tu pago en los servidores de PayPal, por favor no cierres la ventana...</p>
-      <button *ngIf="!cargando" (click)="irAMisPedidos()" class="btn btn-primary" style="margin-top: 20px; padding: 10px 20px;">Ver mis pedidos</button>
+      <p *ngIf="cargando">Confirmando el pago, por favor espera...</p>
+      <button *ngIf="!cargando" (click)="irALaTienda()" class="btn btn-primary" style="margin-top: 20px; padding: 10px 20px;">Volver a la tienda</button>
     </div>
   `
 })
@@ -27,10 +27,17 @@ export class PagoExito implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Capturamos los parámetros que PayPal inyecta en la URL
     this.route.queryParams.subscribe(params => {
-      const token = params['token']; // ID de la orden de PayPal
-      const pedidoId = +params['pedidoId']; // ID de nuestro pedido en base de datos
+      const stripeSessionId = params['session_id'] || params['sessionId'];
+      if (stripeSessionId) {
+        this.cargando = false;
+        this.mensaje = 'Pago recibido. Estamos confirmando tu pedido.';
+        this.cdr.detectChanges();
+        return;
+      }
+
+      const token = params['token'];
+      const pedidoId = +params['pedidoId'];
 
       if (token && pedidoId) {
         this.confirmarPago(token, pedidoId);
@@ -61,7 +68,7 @@ export class PagoExito implements OnInit {
     });
   }
 
-  irAMisPedidos(): void {
-    this.router.navigate(['/mis-pedidos']); // Redirige a su panel
+  irALaTienda(): void {
+    this.router.navigate(['/dashboard']);
   }
 }

@@ -41,12 +41,24 @@ export const routes: Routes = [
     { path: 'registrar', component: Registro },
     { path: 'olvide', component: OlvidePassword },
 
-    // --- RUTAS PROTEGIDAS PARA CLIENTES COMUNES (Bajo AuthGuard) ---
+    // --- CATÁLOGO Y COMPRA PÚBLICOS ---
     {
         path: '',
-        canActivate: [authGuard], 
         children: [
             { path: 'dashboard', component: Dashboard },
+            { path: 'categorias/:categoria', component: Categorias },
+            { path: 'productos/buscar', component: BuscarProductos },
+            { path: 'carrito', component: Carrito },
+            { path: 'checkout', component: Checkout },
+            { path: 'producto/:id', component: DetalleProducto },
+            { path: 'detalle/:id', component: DetalleProducto },
+            { path: 'ofertas', component: OfertasComponent },
+            { path: 'pago-exito', component: PagoExito },
+            { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+            {
+                path: '',
+                canActivate: [authGuard],
+                children: [
             { path: 'productos', component: ProductoLista },
             { path: 'proveedores', component: ProveedorLista },
             { path: 'agregar-proveedor', component: AgregarProveedor },
@@ -56,20 +68,13 @@ export const routes: Routes = [
             { path: 'editar-cliente/:id', component: EditarCliente },
             { path: 'ventas', component: VentasLista },
             { path: 'nueva-venta', component: NuevaVenta },
-            { path: 'categorias/:categoria', component: Categorias },
-            { path: 'productos/buscar', component: BuscarProductos },
-            { path: 'carrito', component: Carrito }, 
             { path: 'servicios-techmarket', component: ServiciosTechmarket },
-            { path: 'checkout', component: Checkout },
             { path: 'mis-pedidos', component: MisPedidos },
-            { path: 'producto/:id', component: DetalleProducto },
-            { path: 'ofertas', component: OfertasComponent },
-            { path: 'pago-exito', component: PagoExito },
             { path: 'perfil', component: Perfil },
-            { path: 'detalle/:id', component: DetalleProducto },
-            { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
             { path: 'wishlist', component: wishlist },
             { path: 'historial-visitas', component: HistorialVisitas }
+                ]
+            }
         ]
     },
 

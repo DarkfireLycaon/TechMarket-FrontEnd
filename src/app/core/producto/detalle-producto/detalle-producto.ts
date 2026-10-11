@@ -18,6 +18,7 @@ import { wishlistService } from '../../../service/wishlist-service';
 export class DetalleProducto implements OnInit {
   producto: any; 
   esDeseado: boolean = false;
+  tieneSesion = false;
 
   private deseadoService = inject(wishlistService);
   private route = inject(ActivatedRoute);
@@ -28,6 +29,7 @@ export class DetalleProducto implements OnInit {
   constructor(private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
+    this.tieneSesion = Boolean(localStorage.getItem('token'));
     this.route.paramMap.subscribe(params => {
       const id = Number(params.get('id'));
       if (id) {
@@ -42,7 +44,7 @@ export class DetalleProducto implements OnInit {
       this.cdr.detectChanges();
 
       // Verificar si el producto está en la lista de deseos del usuario actual
-      this.verificarSiEsDeseado(id);
+      if (this.tieneSesion) this.verificarSiEsDeseado(id);
 
       // Registrar visita
       this.historialService.registrarVisita(id).subscribe({
@@ -95,13 +97,6 @@ toggleDeseado() {
   }
 
   agregarAlCarrito(productoId: number): void {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      this.mostrarNotificacion('Debes iniciar sesión primero', 'warning');
-      setTimeout(() => { window.location.href = '/login'; }, 1500);
-      return;
-    }
-
     this.carritoService.agregarProducto(productoId, 1).subscribe({
       next: () => this.mostrarNotificacion('Producto añadido al carrito', 'success'),
       error: () => this.mostrarNotificacion('No se pudo agregar el producto', 'error')

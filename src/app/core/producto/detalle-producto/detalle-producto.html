@@ -2,20 +2,26 @@
   <div class="container py-5">
     <div class="row">
       <div class="col-md-6">
-        @if (producto.imagenUrl || producto.imagen) {
-          <img [src]="producto.imagenUrl || producto.imagen" 
+        <div class="product-image-wrap">
+          @if (producto.esOferta) {
+            <span class="offer-ribbon">
+              <i class="bi bi-lightning-charge-fill" aria-hidden="true"></i>
+              Oferta activa
+            </span>
+          }
+          @if (producto.imagenUrl || producto.imagen) {
+          <img [src]="producto.imagenUrl || producto.imagen"
                [alt]="producto.nombre"
-               class="img-fluid rounded shadow"
-               style="max-height: 500px; width: 100%; object-fit: cover;">
-        } @else {
-          <div class="bg-light d-flex align-items-center justify-content-center rounded shadow text-muted" 
-               style="height: 400px; width: 100%;">
+               class="product-image">
+          } @else {
+          <div class="product-image-placeholder text-muted">
             <div class="text-center">
               <i class="bi bi-image" style="font-size: 4rem;"></i>
               <p class="mt-2">Sin imagen disponible</p>
             </div>
           </div>
-        }
+          }
+        </div>
       </div>
       
       <div class="col-md-6">
@@ -24,7 +30,7 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h1 class="fw-bold mb-0 text-break pe-2">{{ producto.nombre }}</h1>
   
-  <button class="btn btn-outline-danger border-0 fs-2 d-flex align-items-center justify-content-center" 
+  <button *ngIf="tieneSesion" class="btn btn-outline-danger border-0 fs-2 d-flex align-items-center justify-content-center"
           (click)="toggleDeseado()" 
           title="Añadir a deseados"
           style="min-width: 50px; height: 50px;">
@@ -32,7 +38,24 @@
   </button>
 </div>
         
-        <h3 class="text-primary mt-3">{{ (producto.precio || producto.precioVenta) | currency:'EUR' }}</h3>
+        @if (producto.esOferta && producto.precioOferta > 0) {
+          <div class="offer-price-panel mt-4" aria-label="Precio especial de oferta">
+            <div class="offer-price-heading">
+              <span>Precio de oferta</span>
+              @if (producto.precioVenta > producto.precioOferta) {
+                <span class="offer-discount">
+                  -{{ ((producto.precioVenta - producto.precioOferta) / producto.precioVenta * 100) | number:'1.0-0' }}%
+                </span>
+              }
+            </div>
+            <div class="offer-prices">
+              <span class="offer-original-price">{{ producto.precioVenta | currency:'EUR' }}</span>
+              <strong class="offer-current-price">{{ producto.precioOferta | currency:'EUR' }}</strong>
+            </div>
+          </div>
+        } @else {
+          <h3 class="text-primary mt-3">{{ (producto.precio || producto.precioVenta) | currency:'EUR' }}</h3>
+        }
         
         <p class="mt-4 text-muted">{{ producto.descripcion }}</p>
         

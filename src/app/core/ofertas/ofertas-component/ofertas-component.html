@@ -25,7 +25,7 @@
   <div class="grid-ofertas">
     @for (p of productosFiltrados; track p.idProducto) {
       <article class="card-producto">
-        <button
+        <button *ngIf="tieneSesion"
           type="button"
           class="btn-wishlist"
           [class.activo]="isInWishlist(p)"
@@ -38,10 +38,14 @@
 
         <div class="badge-oferta">Oferta</div>
 
-        <img [src]="p.imagenUrl"
-             appSafeImage="placeholder.jpg"
-             [alt]="p.nombre"
-             loading="lazy">
+           <a class="imagen-producto-link"
+           [routerLink]="['/detalle', p.idProducto]"
+           [attr.aria-label]="'Ver detalle de ' + p.nombre">
+          <img [src]="p.imagenUrl"
+            appSafeImage="placeholder.jpg"
+            [alt]="p.nombre"
+            loading="lazy">
+           </a>
 
         <h3>{{ p.nombre }}</h3>
 

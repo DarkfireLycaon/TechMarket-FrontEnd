@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -78,7 +78,8 @@ export class ProductoService {
     });
   }
    buscarProductos(termino: string): Observable<any> {
-    return this.http.get<any[]>(`${this.apiUrl}/productos/search?q=${termino}`);
+    const params = new HttpParams().set('q', termino.trim());
+    return this.http.get<any[]>(`${this.apiUrl}/productos/search`, { params });
   }
   // En tu servicio Angular
 getOfertas(): Observable<any[]> {

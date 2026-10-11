@@ -77,8 +77,9 @@ onLogin() {
           }
         }
 
-        // Redirigimos al dashboard
-        this.router.navigate(['/dashboard']); 
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+        const destino = returnUrl?.startsWith('/') && !returnUrl.startsWith('//') ? returnUrl : '/dashboard';
+        this.router.navigateByUrl(destino);
       },
       error: (err) => {
         Swal.fire({

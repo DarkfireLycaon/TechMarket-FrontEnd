@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common'; // <--- Importante para ngIf
@@ -23,6 +23,7 @@ export class Registro implements OnInit {
     private fb: FormBuilder, 
     private authService: AuthService, 
     private router: Router,
+    private route: ActivatedRoute,
     
   ) {}
 
@@ -46,6 +47,11 @@ export class Registro implements OnInit {
   // Getter para acceder fácil a los campos en el HTML
   get f() { return this.registroForm.controls; }
 
+  private obtenerDestino(): string {
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    return returnUrl?.startsWith('/') && !returnUrl.startsWith('//') ? returnUrl : '/dashboard';
+  }
+
   onRegistro() {
     if (this.registroForm.invalid) {
       this.registroForm.markAllAsTouched(); // Resalta los errores si el usuario intenta enviar
@@ -64,7 +70,7 @@ export class Registro implements OnInit {
 
         if (token) {
           localStorage.setItem('token', token);
-          this.router.navigate(['/dashboard']);
+          this.router.navigateByUrl(this.obtenerDestino());
         } else if (email && password) {
           this.authService.login({ email, password }).subscribe({
             next: () => {
@@ -77,7 +83,7 @@ export class Registro implements OnInit {
                 timerProgressBar: true
               });
 
-              this.router.navigate(['/dashboard']);
+              this.router.navigateByUrl(this.obtenerDestino());
             },
             error: () => {
               Swal.fire({
