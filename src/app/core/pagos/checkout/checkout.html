@@ -97,6 +97,12 @@
           <h5 class="mb-0 text-light">Resumen del pedido</h5>
         </div>
         <div class="card-body">
+          <div *ngIf="carritoCargando" class="alert alert-info" role="status">
+            Verificando el carrito...
+          </div>
+          <div *ngIf="errorCarrito" class="alert alert-danger" role="alert">
+            {{ errorCarrito }}
+          </div>
           <div class="mb-3" *ngFor="let item of carrito.items">
             <div class="d-flex justify-content-between small mb-2">
               <span class="text-secondary">
@@ -122,7 +128,7 @@
           
           <button class="btn btn-primary w-100 btn-lg" 
                   (click)="procesarPago()" 
-                  [disabled]="procesando">
+                  [disabled]="procesando || carritoCargando || !!errorCarrito">
             <span *ngIf="!procesando">
               <i class="fas fa-lock me-2"></i>{{ esInvitado ? 'Continuar al pago seguro' : 'Pagar con Stripe' }}
             </span>

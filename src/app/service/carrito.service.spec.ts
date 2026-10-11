@@ -65,4 +65,20 @@ describe('CarritoService', () => {
 
     expect(localStorage.getItem(guestCartKey)).toBeNull();
   });
+
+  it('obtiene el carrito de la cuenta desde el servidor con el token activo', async () => {
+    localStorage.setItem('token', 'test-token');
+
+    const carritoPromise = firstValueFrom(carritoService.obtenerCarrito());
+    const request = httpMock.expectOne(`${environment.apiUrl}/api/carrito`);
+
+    expect(request.request.method).toBe('GET');
+    expect(request.request.headers.get('Authorization')).toBe('Bearer test-token');
+    request.flush({ items: [{ productoId: 13, cantidad: 2 }], total: 199.98 });
+
+    await expect(carritoPromise).resolves.toEqual({
+      items: [{ productoId: 13, cantidad: 2 }],
+      total: 199.98,
+    });
+  });
 });
